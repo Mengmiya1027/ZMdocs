@@ -4,7 +4,7 @@ layout: home
 
 hero:
   name: "ZMdocs"
-  text: "万物生长"
+  text: "温柔有骨•梦里有光"
   tagline: 
   actions:
     - theme: brand
