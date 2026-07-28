@@ -1,4 +1,7 @@
 export function useHeroImageTilt() {
+    if (typeof window === 'undefined' || typeof document === 'undefined') {
+        return () => {};
+    }
     const triggerDistance = 160
     const moveRange = 6
     const shadowRange = 14

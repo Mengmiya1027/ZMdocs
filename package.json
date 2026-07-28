@@ -1,7 +1,8 @@
 {
   "devDependencies": {
     "sass-embedded": "^1.100.0",
-    "vitepress": "^2.0.0-alpha.18"
+    "vitepress": "^2.0.0-alpha.18",
+    "vitepress-sidebar": "^1.36.1"
   },
   "scripts": {
     "docs:dev": "vitepress dev src",
