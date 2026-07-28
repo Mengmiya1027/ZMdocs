@@ -1,7 +1,7 @@
 import DefaultTheme from 'vitepress/theme';
 import { watch } from 'vue'
 
-// 主题文件
+// 主题统一入口
 import "./styles/index.css"
 
 // 已封装的工具
