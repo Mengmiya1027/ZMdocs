@@ -1,5 +1,5 @@
 import DefaultTheme from 'vitepress/theme';
-import { watch } from 'vue'
+import { watch, nextTick } from 'vue'
 
 // 主题统一入口
 import "./styles/index.css"
@@ -11,20 +11,37 @@ import { useHeroImageTilt } from './utils/heroImageTilt'
 export default {
     ...DefaultTheme,
     enhanceApp({ app, router }) {
-        let destroyEffect: (() => void) | null = null
+        // 只在客户端环境下注册路由监听和初始化效果
+        if (typeof window !== 'undefined') {
+            let destroyEffect: (() => void) | null = null;
 
-        function initEffect() {
-            // 重点：优先销毁上一次实例
-            if (destroyEffect) {
-                destroyEffect()
-                destroyEffect = null
+            // @ts-ignore
+            async function initEffect() {
+                if (destroyEffect) {
+                    destroyEffect();
+                    destroyEffect = null;
+                }
+                try {
+                    const destroy = await useHeroImageTilt();
+                    destroyEffect = destroy;
+                } catch (e) {
+                    console.error('Hero tilt init failed', e);
+                }
             }
-            setTimeout(() => {
-                destroyEffect = useHeroImageTilt()
-            }, 120)
-        }
 
-        watch(router.route, initEffect)
-        initEffect()
+            // 页面加载完成后执行
+            if (document.readyState === 'complete') {
+                initEffect();
+            } else {
+                window.addEventListener('load', initEffect, { once: true });
+            }
+
+            // 监听路由变化，重新初始化效果
+            // @ts-ignore
+            const unwatch = watch(router.route, async () => {
+                await nextTick();
+                initEffect();
+            });
+        }
     }
-}
+};

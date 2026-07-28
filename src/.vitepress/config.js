@@ -83,5 +83,12 @@ export default defineConfig({
       linkLabel: '返回主页面',
       linkText: '返回主页面'
     }
+  },
+
+  // 模块配置
+  vite: {
+    build: {
+      cssMinify: false   // 禁用 CSS 压缩
+    }
   }
 })

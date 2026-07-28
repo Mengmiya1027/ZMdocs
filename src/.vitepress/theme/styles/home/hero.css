@@ -10,6 +10,10 @@
     .image-container {
         margin-left: 40px !important;
     }
+    /*文字*/
+    .main {
+        margin-left: 20px !important;
+    }
 }
 
 /*主页右上大图*/
