@@ -1,9 +1,8 @@
 import { defineConfig } from 'vitepress'
 
-// https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: "ZMdocs",
-  description: "万物生长",
+  description: "温柔有骨·梦里有光",
 
   themeConfig: {
 
@@ -78,9 +77,9 @@ export default defineConfig({
     notFound: {
       code: '404',
       title: '页面未找到',
-      quote: '您访问的页面找不到啦~\n' +
-          '可以试试返回上个链接\n' +
-          '或者点击下面的按钮返回主页哦~',
+      quote: '您访问的页面找不到啦' +
+          '可以试试返回上个链接' +
+          '或者点击下面的按钮返回主页哦',
       linkLabel: '返回主页面',
       linkText: '返回主页面'
     }

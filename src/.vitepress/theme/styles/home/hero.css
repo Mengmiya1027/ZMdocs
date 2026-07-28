@@ -1,0 +1,47 @@
+:root {
+    --vp-home-hero-name-background: -webkit-linear-gradient(120deg, #bd34fe 30%, #41d1ff) !important;
+    --vp-home-hero-name-color: transparent;
+    --vp-home-hero-image-background-image: linear-gradient(-45deg, #bd34fe 50%, #47caff 50%);
+    --vp-home-hero-image-filter: blur(44px);
+}
+
+@media (min-width: 960px) {
+    /*主页图片区域位置调整*/
+    .image-container {
+        margin-left: 40px !important;
+    }
+}
+
+/*主页右上大图*/
+.VPImage {
+    aspect-ratio: 1 / 1 !important;
+    width: auto !important;
+    height: auto !important;
+    object-fit: cover;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    transition: all 0.2s;
+}
+
+/*按钮*/
+.VPButton.medium.brand {
+/* 清除原生纯色背景 */
+--vp-button-brand-bg: transparent;
+    background: linear-gradient(120deg, #bd34fe 30%, #41d1ff);
+    border: none;
+    border-radius: 16px !important; /* 圆角框 */
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08) !important; /* 一点悬浮阴影 */
+    transition: all 0.2s ease-out;
+}
+
+/* hover 渐变变换 */
+.VPButton.medium.brand:hover {
+    background: linear-gradient(120deg, rgb(179, 22, 254) 30%, rgb(33, 201, 255));
+    transform: scale(1.05);
+}
+
+/* active 点击效果 */
+.VPButton.medium.brand:active {
+    background: linear-gradient(120deg, rgb(145, 1, 213) 30%, rgb(0, 170, 224));
+}
+

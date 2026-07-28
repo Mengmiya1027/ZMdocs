@@ -1,18 +1,19 @@
 ---
-# https://vitepress.dev/reference/default-theme-home-page
 layout: home
 
 hero:
   name: "ZMdocs"
-  text: "温柔有骨•梦里有光"
-  tagline: 
+  text: "来了？随便坐~"
+  image:
+    src: /images/basic/zm.jpg
+  tagline: "稚是出发时的样子， 梦是要去的地方。 这里记录着我的思考、热爱与野心。"
   actions:
     - theme: brand
-      text: Markdown Examples
-      link: /markdown-examples
+      text: 进来坐坐
+      link: /start/
     - theme: alt
-      text: API Examples
-      link: /api-examples
+      text: 了解一下?↗
+      link: https://github.com/Mengmiya1027/ZMdocs
 
 features:
   - title: Feature A
