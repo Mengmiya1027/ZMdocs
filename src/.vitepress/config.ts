@@ -2,11 +2,11 @@ import { defineConfig } from 'vitepress'
 
 export default defineConfig({
   title: "ZMdocs",
-  titleTemplate: "温柔有骨·梦里有光",
-  description: "温柔有骨·梦里有光",
+  titleTemplate: "稚梦 · 随意写，随意看",
+  description: "稚梦 · 随意写，随意看",
   lang: 'zh-CN',
 
-  head: [['link', { rel: 'icon', href: '/images/basic/zm.jpg' }]],
+  head: [['link', { rel: 'icon', href: '/images/basic/zm2.png' }]],
   lastUpdated: true,
 
   themeConfig: {
