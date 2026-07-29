@@ -17,7 +17,7 @@
 }
 
 /*主页右上大图*/
-.VPImage {
+.VPImage:not(.logo) {
     aspect-ratio: 1 / 1 !important;
     width: auto !important;
     height: auto !important;

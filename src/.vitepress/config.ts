@@ -10,7 +10,7 @@ export default defineConfig({
   lastUpdated: true,
 
   themeConfig: {
-
+    logo: '/images/basic/zm.jpg',
     nav: [
       { text: '首页', link: '/' },
       { text: '进来坐坐', link: '/start/' }
