@@ -1,0 +1,139 @@
+/*背景图透明用*/
+.VPContent,
+.VPDoc,
+.VPPage,
+.dark .VPContent,
+.dark .VPDoc,
+.dark .VPPage {
+    background: transparent !important;
+}
+
+/* 侧边栏和文档内容区域透明 */
+.VPSidebarItem {
+    transition: margin 0.2s ease,height 0.2s ease,background 0.2s ease !important;
+}
+
+.VPSidebar{
+    background: rgba(255, 255, 255, 0.2) !important;
+    backdrop-filter: blur(6px) saturate(180%);
+    -webkit-backdrop-filter: blur(2px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* 侧边底层容器 */
+.group{
+    border-top-color: transparent !important;
+    /*noinspection CssUnresolvedCustomProperty*/
+    width: calc(var(--vp-sidebar-width) - 48px) !important;
+
+}
+
+/* 侧边栏主项目 */
+.VPSidebarItem.collapsed{
+    margin: 0;
+}
+
+.VPSidebarItem:not(.collapsed).collapsible, .VPSidebarItem.level-0.collapsible.collapsed {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+    padding-bottom: 0 !important;
+    margin: 5px !important;
+}
+
+.items {
+    border-left:none !important;
+}
+
+.VPSidebarItem .items {
+    padding: 0 !important;
+}
+
+.VPSidebarItem {
+    margin: 0;
+    padding: 0;
+    border: none;
+    box-shadow: none;
+    background: transparent;
+    border-radius: 0;
+}
+
+.VPSidebarItem .items {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+
+[class="VPLink link link"],
+:not([class="items"]) > [class*="VPSidebarItem"] > [class="item"],
+[class*="VPSidebarItem"] > [class="item"][role="button"],
+[class="title"][href="/"],
+.VPNolebaseInlinePreviewLink,
+.VPLink.link.vp-external-link-icon.no-icon.edit-link-button{
+    border-radius: 16px !important;
+    transition: all 0.25s ease !important;
+    padding: 0 10px !important;
+}
+
+[class="VPLink link link"]:hover,
+:not([class="items"]) > [class*="VPSidebarItem"] > [class="item"]:hover,
+[class*="VPSidebarItem"] > [class="item"][role="button"]:hover,
+[class="title"][href="/"]:hover,
+.VPLink.link.vp-external-link-icon.no-icon.edit-link-button:hover {
+    background-color: rgba(0, 0, 0, 0.08) !important;
+    padding: 0 12px !important;
+}
+
+[class="VPLink link link"]:active,
+:not([class="items"]) > [class*="VPSidebarItem"] > [class="item"]:active,
+[class*="VPSidebarItem"] > [class="item"][role="button"]:active,
+[class="title"][href="/"]:active,
+.VPLink.link.vp-external-link-icon.no-icon.edit-link-button:active {
+    padding: 0 15px !important;
+}
+
+.VPSidebar {
+    padding:64px 16px 48px 16px !important;
+}
+
+.VPSidebarItem {
+    margin: 0 !important;
+    padding: 0;
+    border: none;
+    box-shadow: none;
+    background: transparent;
+    border-radius: 0;
+}
+
+.text[data-v-3db96182] {
+    padding: 4px 0;
+}
+
+.items:has(.VPSidebarItem){
+    gap: 0;
+}
+
+/* 父元素 */
+.VPSidebarItem {
+    overflow: hidden;
+    transition: height 0.3s ease;
+}
+
+/* 展开状态 */
+.VPSidebarItem .items {
+    display: block !important; /* 覆盖 display:none */
+    opacity: 1;
+    transition: opacity 0.3s ease, max-height 0.3s ease !important;
+}
+
+/* 收起状态 */
+.VPSidebarItem.collapsed .items {
+    display: block !important;
+    opacity: 0;
+    max-height: 0; /* 高度同时变 0 */
+    transition: opacity 0.3s ease, max-height 0.3s ease !important;
+}

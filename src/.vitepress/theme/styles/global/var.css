@@ -2,3 +2,9 @@
     --vp-button-alt-hover-bg: #dddde3;
     --vp-button-alt-active-bg: #bebec3;
 }
+
+.dark{
+    --vp-button-alt-bg: #4b515e;
+    --vp-button-alt-hover-bg: #393d47;
+    --vp-button-alt-active-bg: #262a30;
+}

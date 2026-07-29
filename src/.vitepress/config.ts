@@ -25,7 +25,96 @@ export default defineConfig({
           { text: '进来坐坐', link: '/' },
           { text: '和异味', link: '/features' }
         ]
-      }
+      },
+      {
+        text: '开始探索',
+        base: '/guide',
+        collapsed: false,
+        items: [
+          { text: '开始探索', link: '/start-discover' },
+          { text: '更新日志&新功能介绍', link: '/new' },
+        ]
+      },
+      {
+        text: '资源',
+        base: '/resources',
+        collapsed: false,
+        items: [
+          { text: '概览', link: '/' },
+          {
+            text: '应用程序',
+            base: '/resources/application',
+            collapsed: true,
+            items: [  /* 应用程序 仿照这里的格式进行编写*/
+              {
+                text: '独立型应用程序',
+                base: '/resources/application/single',
+                collapsed: true,
+                items: [
+                  { text: '介绍', link: '/' },
+                  { text: '概览', link: '/map' },
+                  { text: '❗反极域课堂专栏', link: '/JiYuDiaoDuan' },
+                  { text: '希沃白板爆改', link: '/easinotekz' }
+                ]
+              },
+              {
+                text: '打包型应用程序',
+                base: '/resources/application/pack',
+                collapsed: true,
+                items: [
+                  { text: '介绍', link: '/' },
+                  { text: '概览', link: '/map' },
+                  { text: '雷电模拟器 ⚡', link: '/ldmnq' },
+                  { text: '蛋仔派对', link: '/eggy-party' },
+                  { text: 'Minecraft（我的世界）', link: '/minecraft' },
+                  { text: 'Motrix', link: '/motrix' }
+                ]
+              }
+            ]
+          },
+          {
+            text: '网站',
+            base: '/resources/website',
+            collapsed: true,
+            items: [
+              { text: '介绍', link: '/' },
+              { text: '概览', link: '/map' },
+              { text: 'MC.js', link: '/mc-js' },
+              { text: '原神抽卡模拟器', link: '/yschou' },
+              { text: 'WG-WebGame', link: '/WG-WebGame/' },
+              { text: '▮▮学习资料网站', link: '/ChinaFZ110' },
+            ]
+          },
+          {
+            text: '图片',
+            base: '/resources/picture',
+            collapsed: true,
+            items: [
+              { text: '概览', link: '/map' },
+              { text: '蛋仔 ', link: '/eggy' },
+            ]
+          },
+          {
+            text: '视频',
+            base: '/resources/video',
+            collapsed: true,
+            items: [
+              { text: '概览', link: '/map' }
+            ]
+          },
+        ]
+      },
+      {
+        text: 'Astrdocs Pro Service',
+        base: '/pro',
+        collapsed: false,
+        items: [
+          { text: '概览', link: '/' },
+          { text: '加速访问&镜像站点', link: '/speed' },
+          { text: '文件快递柜', link: '/filehelper' },
+          { text: '哈基米语翻译器', link: '/hajimi' }
+        ]
+      },
     ],
 
     socialLinks: [
@@ -95,7 +184,11 @@ export default defineConfig({
   // 模块配置
   vite: {
     build: {
-      cssMinify: false   // 禁用 CSS 压缩
-    }
+      cssMinify: false
+    },
+    server: {
+      host: '0.0.0.0',
+      strictPort: true,
+    },
   }
 })
