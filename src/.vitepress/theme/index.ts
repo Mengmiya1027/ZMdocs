@@ -10,7 +10,10 @@ import "./styles/index.css"
 export default {
     ...DefaultTheme,
     enhanceApp({ router }) {
-        autoHeroImageTilt(router, 960);
+        if ( typeof window !== 'undefined' ) {
+            autoHeroImageTilt(router, 960);
+        }
+
         const originalOnAfterRouteChange = router.onAfterRouteChange;
         router.onAfterRouteChange = () => {
             originalOnAfterRouteChange?.();
