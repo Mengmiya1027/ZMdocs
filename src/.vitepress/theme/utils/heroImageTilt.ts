@@ -10,27 +10,18 @@ export function useHeroImageTilt(): Promise<() => void> {
 
     // @ts-ignore
     return new Promise((resolve) => {
-        const mobileBreakpoint = 768;
-        if (window.innerWidth <= mobileBreakpoint) {
-            resolve(() => {});
-            return;
-        }
-
         const imgSelector = '.VPHero .image img';
         let resolved = false;
 
-        // ----- 核心：等待元素出现，再等待图片加载 -----
         function tryInitWhenElementReady() {
             if (resolved) return;
 
             const imgEl = document.querySelector<HTMLImageElement>(imgSelector);
             if (!imgEl) {
-                // 未找到元素，启动 MutationObserver 继续监听
                 startObserver();
                 return;
             }
 
-            // 元素已存在，等待图片加载完成后初始化
             waitForImageLoad(imgEl, (destroy) => {
                 if (!resolved) {
                     resolved = true;
@@ -39,18 +30,15 @@ export function useHeroImageTilt(): Promise<() => void> {
             });
         }
 
-        // ----- 等待图片加载（复用原有逻辑）-----
         function waitForImageLoad(
             imgEl: HTMLImageElement,
             onReady: (destroy: () => void) => void
         ) {
-            // 已加载完成，立即初始化
             if (imgEl.complete && imgEl.naturalWidth > 0) {
                 initEffect(imgEl, onReady);
                 return;
             }
 
-            // 监听 load，并设超时兜底
             let done = false;
             const onLoad = () => {
                 if (done) return;
@@ -65,22 +53,18 @@ export function useHeroImageTilt(): Promise<() => void> {
                 if (!done) {
                     done = true;
                     imgEl.removeEventListener('load', onLoad);
-                    // 超时强制初始化（可能尺寸不准，但避免死等）
                     initEffect(imgEl, onReady);
                 }
             }, 5000);
         }
 
-        // ----- MutationObserver 监听 DOM 插入 -----
         let observer: MutationObserver | null = null;
 
         function startObserver() {
             if (observer) return;
             observer = new MutationObserver(() => {
-                // 重新尝试查找元素
                 const imgEl = document.querySelector<HTMLImageElement>(imgSelector);
                 if (imgEl) {
-                    // 找到后断开监听
                     observer?.disconnect();
                     observer = null;
                     waitForImageLoad(imgEl, (destroy) => {
@@ -95,30 +79,38 @@ export function useHeroImageTilt(): Promise<() => void> {
                 childList: true,
                 subtree: true,
             });
-            // 设置超时，避免永久监听
             setTimeout(() => {
                 if (observer && !resolved) {
                     observer.disconnect();
                     observer = null;
-                    // 若仍未找到，放弃初始化
                     console.warn('Hero 图片未找到，放弃动效');
                     resolve(() => {});
                 }
             }, 10000);
         }
 
-        // ----- 初始化核心逻辑（与之前完全一致）-----
+        // ========== 核心修复在这里 ==========
         function initEffect(
             imgEl: HTMLImageElement,
             onReady: (destroy: () => void) => void
         ) {
-            // 保存原始 transform
+            // ✅ 保存「原始内联样式」，不是计算样式！
+            const originalTransform = imgEl.style.transform;
+            const originalBoxShadow = imgEl.style.boxShadow;
+            const originalWillChange = imgEl.style.willChange;
+            const originalTransition = imgEl.style.transition;
+
+            // 计算样式仅用于动效叠加时的 base
             const computedStyle = window.getComputedStyle(imgEl);
             const baseTransform =
                 computedStyle.transform === 'none' ? '' : computedStyle.transform;
-            imgEl.style.transform = baseTransform || '';
 
-            // 主题阴影颜色
+            // 仅在图片没有内联 transform 时，才把 CSS 计算值写入内联（作为动效基础）
+            // 避免覆盖用户原本的内联样式
+            if (baseTransform && !originalTransform) {
+                imgEl.style.transform = baseTransform;
+            }
+
             const getShadowColor = () => {
                 const isDark = document.documentElement.classList.contains('dark');
                 return isDark ? 'rgba(255, 255, 255, 0.35)' : 'rgba(0, 0, 0, 0.25)';
@@ -129,8 +121,7 @@ export function useHeroImageTilt(): Promise<() => void> {
                 'transform 0.12s ease-out, box-shadow 0.12s ease-out';
             imgEl.style.willChange = 'transform, box-shadow';
 
-            // 监听主题切换
-            const observer = new MutationObserver(() => {
+            const themeObserver = new MutationObserver(() => {
                 const newColor = getShadowColor();
                 if (newColor !== currentShadowColor) {
                     currentShadowColor = newColor;
@@ -139,12 +130,11 @@ export function useHeroImageTilt(): Promise<() => void> {
                     }
                 }
             });
-            observer.observe(document.documentElement, {
+            themeObserver.observe(document.documentElement, {
                 attributes: true,
                 attributeFilter: ['class'],
             });
 
-            // 锚点与滚动重置
             let originCenterX = 0,
                 originCenterY = 0,
                 anchorReady = false;
@@ -162,7 +152,6 @@ export function useHeroImageTilt(): Promise<() => void> {
             };
             window.addEventListener('scroll', onScroll, { passive: true });
 
-            // rAF 合并更新
             let rafId: number | null = null;
             let pendingUpdate: (() => void) | null = null;
 
@@ -214,19 +203,20 @@ export function useHeroImageTilt(): Promise<() => void> {
             document.addEventListener('mousemove', handleMouseMove);
             document.addEventListener('mouseleave', onWindowLeave);
 
-            // 销毁函数
             function destroy() {
                 document.removeEventListener('mousemove', handleMouseMove);
                 document.removeEventListener('mouseleave', onWindowLeave);
                 window.removeEventListener('scroll', onScroll);
-                observer.disconnect();
+                themeObserver.disconnect();
                 if (rafId) cancelAnimationFrame(rafId);
 
                 if (imgEl.isConnected) {
-                    imgEl.style.transform = baseTransform || '';
-                    imgEl.style.boxShadow = '';
-                    imgEl.style.willChange = '';
-                    imgEl.style.transition = '';
+                    // ✅ 关键修复：恢复原始内联样式，而不是恢复 baseTransform
+                    // 这样当 CSS media query 变化时，不会用旧的桌面端计算值覆盖新规则
+                    imgEl.style.transform = originalTransform;
+                    imgEl.style.boxShadow = originalBoxShadow;
+                    imgEl.style.willChange = originalWillChange;
+                    imgEl.style.transition = originalTransition;
                 }
                 console.log('动效已销毁');
             }
@@ -235,7 +225,81 @@ export function useHeroImageTilt(): Promise<() => void> {
             onReady(destroy);
         }
 
-        // ----- 启动：尝试立即查找，若不存在则开始监听 -----
         tryInitWhenElementReady();
     });
+}
+
+// ---------- 自动生命周期管理 ----------
+export function autoHeroImageTilt(router: any, mobileBreakpoint = 768): () => void {
+    let destroyEffect: (() => void) | null = null;
+    let initPromise: Promise<void> | null = null;
+
+    // @ts-ignore
+    async function init() {
+        if (initPromise) {
+            await initPromise;
+        }
+
+        if (destroyEffect) {
+            destroyEffect();
+            destroyEffect = null;
+        }
+
+        if (window.innerWidth <= mobileBreakpoint) {
+            return;
+        }
+
+        // @ts-ignore
+        const p = (async () => {
+            try {
+                destroyEffect = await useHeroImageTilt();
+            } catch (e) {
+                console.error('Hero tilt init failed', e);
+            }
+        })();
+        initPromise = p;
+        await p;
+        if (initPromise === p) {
+            initPromise = null;
+        }
+    }
+
+    if (document.readyState === 'complete') {
+        init();
+    } else {
+        window.addEventListener('load', () => init(), { once: true });
+    }
+
+    const originalOnAfterRouteChange = router.onAfterRouteChange;
+    router.onAfterRouteChange = () => {
+        originalOnAfterRouteChange?.();
+        init();
+    };
+
+    let resizeTimer: number | null = null;
+    const onResize = () => {
+        if (resizeTimer) clearTimeout(resizeTimer);
+        resizeTimer = window.setTimeout(() => {
+            const isDesktop = window.innerWidth > mobileBreakpoint;
+            const hasEffect = destroyEffect !== null;
+
+            if (isDesktop && !hasEffect) {
+                init();
+            } else if (!isDesktop && hasEffect) {
+                destroyEffect!();
+                destroyEffect = null;
+            }
+        }, 150);
+    };
+    window.addEventListener('resize', onResize);
+
+    return () => {
+        if (destroyEffect) {
+            destroyEffect();
+            destroyEffect = null;
+        }
+        router.onAfterRouteChange = originalOnAfterRouteChange;
+        window.removeEventListener('resize', onResize);
+        if (resizeTimer) clearTimeout(resizeTimer);
+    };
 }

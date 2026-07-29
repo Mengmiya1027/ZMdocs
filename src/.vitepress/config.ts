@@ -2,31 +2,38 @@ import { defineConfig } from 'vitepress'
 
 export default defineConfig({
   title: "ZMdocs",
+  titleTemplate: "温柔有骨·梦里有光",
   description: "温柔有骨·梦里有光",
+  lang: 'zh-CN',
+
+  head: [['link', { rel: 'icon', href: '/images/basic/zm.jpg' }]],
+  lastUpdated: true,
 
   themeConfig: {
 
     nav: [
-      { text: 'Home', link: '/' },
-      { text: 'Examples', link: '/markdown-examples' }
+      { text: '首页', link: '/' },
+      { text: '进来坐坐', link: '/start/' }
     ],
 
     sidebar: [
       {
-        text: 'Examples',
+        text: '欢迎',
+        collapsed: false,
+        base: '/start',
         items: [
-          { text: 'Markdown Examples', link: '/markdown-examples' },
-          { text: 'Runtime API Examples', link: '/api-examples' }
+          { text: '进来坐坐', link: '/' },
+          { text: '和异味', link: '/features' }
         ]
       }
     ],
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/vuejs/vitepress' }
+      { icon: 'github', link: 'https://github.com/Mengmiya1027/ZMdocs' }
     ],
 
     editLink: {
-      pattern: 'https://github.com/Mengmiya1027/WGdocs-v2/edit/main/src/:path',
+      pattern: 'https://github.com/Mengmiya1027/Mengmiya1027/edit/main/src/:path',
       text: '在 GitHub 上编辑此页面'
     },
 

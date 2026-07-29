@@ -27,14 +27,14 @@
     transition: all 0.2s;
 }
 
-/*按钮*/
+/* 品牌按钮 */
 .VPButton.medium.brand {
 /* 清除原生纯色背景 */
 --vp-button-brand-bg: transparent;
     background: linear-gradient(120deg, #bd34fe 30%, #41d1ff);
     border: none;
     border-radius: 16px !important; /* 圆角框 */
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08) !important; /* 一点悬浮阴影 */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     transition: all 0.2s ease-out;
 }
 
@@ -49,3 +49,10 @@
     background: linear-gradient(120deg, rgb(145, 1, 213) 30%, rgb(0, 170, 224));
 }
 
+/*次要按钮*/
+.VPButton.medium.alt{
+    border: none;
+    border-radius: 16px !important; /* 圆角框 */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    transition: background-color 0s;
+}

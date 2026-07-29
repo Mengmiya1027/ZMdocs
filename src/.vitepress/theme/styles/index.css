@@ -1,5 +1,9 @@
+/* dinamic文件夹中的css为动态引用，不在此处统一导入。由index.ts使用的封装组件统一整理 */
+
 @import "./home/hero.css";
 @import "./global/var.css";
 @import "./global/fonts.css";
 @import "./global/background.css";
 @import "./global/liquid-glass.css";
+@import "./home/features.css";
+@import "./global/search.css";

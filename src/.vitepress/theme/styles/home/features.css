@@ -1,0 +1,18 @@
+/* 灵动效果 */
+@media (min-width: 960px) {
+    .item {
+        transform: scale(1);
+        z-index: 1;
+        transition: transform .2s ease;
+    }
+
+    .item:hover {
+        transform: scale(1.06);
+        z-index: 2;
+    }
+
+    .item:active {
+        transform: scale(1.03);
+        z-index: 2;
+    }
+}

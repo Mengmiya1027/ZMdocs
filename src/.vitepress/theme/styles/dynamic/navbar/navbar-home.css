@@ -1,0 +1,41 @@
+/* 顶栏 */
+html {
+    container-type: scroll-state;
+}
+
+.container:has(> .title){
+    background: rgba(255, 255, 255, 0.4) !important;
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    padding:0 20px !important;
+    margin-top: 20px !important;
+    transition: margin 0.15s ease, border-radius 0.15s ease;
+}
+
+.wrapper:has(> .container){
+    transition: all 0.1s ease;
+}
+
+@container scroll-state(scrollable: top) {
+    .container:has(> .title){
+        margin: 0 !important;
+        min-width:100% !important;
+        border-radius: 0 0 16px 16px;
+    }
+    .wrapper:has(> .container){
+        padding:0;
+    }
+}
+
+.VPNavBar.home{
+    background: none !important;
+    border-bottom: none !important;
+}
+
+/*不要分割线*/
+.divider:has(> .divider-line) {
+    display: none;
+}
