@@ -9,6 +9,23 @@ export default defineConfig({
   head: [['link', { rel: 'icon', href: '/images/basic/zm2.png' }]],
   lastUpdated: true,
 
+  // 合并 vite 配置
+  vite: {
+    build: {
+      cssMinify: false
+    },
+    server: {
+      host: '0.0.0.0',
+      strictPort: true,
+      allowedHosts: [
+        'uk.frp.one',
+        '*.frp.one',
+        'localhost',
+        '127.0.0.1'
+      ]
+    },
+  },
+
   themeConfig: {
     logo: '/images/basic/zm.jpg',
     nav: [
@@ -45,7 +62,7 @@ export default defineConfig({
             text: '应用程序',
             base: '/resources/application',
             collapsed: true,
-            items: [  /* 应用程序 仿照这里的格式进行编写*/
+            items: [
               {
                 text: '独立型应用程序',
                 base: '/resources/application/single',
@@ -179,16 +196,5 @@ export default defineConfig({
       linkLabel: '返回主页面',
       linkText: '返回主页面'
     }
-  },
-
-  // 模块配置
-  vite: {
-    build: {
-      cssMinify: false
-    },
-    server: {
-      host: '0.0.0.0',
-      strictPort: true,
-    },
   }
 })
