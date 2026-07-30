@@ -1,12 +1,16 @@
 {
+  "name": "zmdocs",
+  "version": "Preview17",
   "devDependencies": {
     "sass-embedded": "^1.100.0",
-    "vitepress": "^2.0.0-alpha.18",
-    "vitepress-sidebar": "^1.36.1"
+    "vitepress": "^2.0.0-alpha.18"
   },
   "scripts": {
     "docs:dev": "vitepress dev src",
     "docs:build": "vitepress build src",
     "docs:preview": "vitepress preview src"
+  },
+  "dependencies": {
+    "gray-matter": "^4.0.3"
   }
 }
