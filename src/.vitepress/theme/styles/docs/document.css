@@ -1,0 +1,16 @@
+.prev-next {
+    border-top:none !important;
+}
+
+.VPLink.link.no-icon.edit-link-button{
+    border-radius: 16px !important;
+    padding: 0 10px !important;
+}
+
+.VPLink.link.no-icon.edit-link-button:hover{
+    background-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+.VPLink.link.no-icon.edit-link-button:active{
+    background-color: rgba(0, 0, 0, 0.2) !important;
+}

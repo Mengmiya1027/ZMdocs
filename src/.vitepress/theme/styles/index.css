@@ -8,4 +8,5 @@
 @import "./home/features.css";
 @import "./global/search.css";
 @import "./docs/sidebar.css";
+@import "./docs/document.css";
 @import "global/navbar.css";

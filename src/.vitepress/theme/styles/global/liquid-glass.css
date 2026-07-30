@@ -58,7 +58,7 @@
     margin: 0 auto;
 }
 
-/* 404界面 */
+/* 404界面&未知何用小按钮 */
 .NotFound {
     background: var(--zm-background-medium);
     backdrop-filter: var(--zm-backdrop-blur-medium);
@@ -67,10 +67,33 @@
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
-.NotFound .action .link{
-    background: var(--zm-background-medium);
+.NotFound .action .link, .VPSkipLink{
+    background: var(--zm-background-medium) !important;
     backdrop-filter: var(--zm-backdrop-blur-medium);
     border: 1px solid rgba(255, 255, 255, 0.3);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s ease;
+}
+
+/* 页面元素 */
+.VPLink.link.pager-link, .edit-info{
+    background: var(--zm-background-medium) !important;
+    backdrop-filter: var(--zm-backdrop-blur-medium);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+    border-radius: 16px;
+}
+
+.edit-info{
+    border-radius: 16px;
+    padding: 5px 15px 5px 5px!important;
+}
+
+.VPLink.link.pager-link:hover{
+    background-color: rgba(0, 0, 0, 0.02) !important;
+}
+
+.VPLink.link.pager-link:active{
+    background-color: rgba(0, 0, 0, 0.1) !important;
 }

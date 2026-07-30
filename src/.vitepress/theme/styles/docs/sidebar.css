@@ -82,9 +82,8 @@
 
 [class="VPLink link link"],
 :not([class="items"]) > [class*="VPSidebarItem"] > [class="item"],
-[class*="VPSidebarItem"] > [class="item"][role="button"],
-.VPNolebaseInlinePreviewLink,
-.VPLink.link.vp-external-link-icon.no-icon.edit-link-button{
+[class*="VPSidebarItem"] > [class="item"][role="button"]
+{
     border-radius: 16px !important;
     transition: all 0.25s ease !important;
     padding: 0 10px !important;
@@ -92,21 +91,15 @@
 
 [class="VPLink link link"]:hover,
 :not([class="items"]) > [class*="VPSidebarItem"] > [class="item"]:hover,
-[class*="VPSidebarItem"] > [class="item"][role="button"]:hover,
-.VPLink.link.vp-external-link-icon.no-icon.edit-link-button:hover {
+[class*="VPSidebarItem"] > [class="item"][role="button"]:hover{
     background-color: rgba(0, 0, 0, 0.08) !important;
     padding: 0 12px !important;
 }
 
 [class="VPLink link link"]:active,
 :not([class="items"]) > [class*="VPSidebarItem"] > [class="item"]:active,
-[class*="VPSidebarItem"] > [class="item"][role="button"]:active,
-.VPLink.link.vp-external-link-icon.no-icon.edit-link-button:active {
+[class*="VPSidebarItem"] > [class="item"][role="button"]:active {
     padding: 0 17px !important;
-}
-
-.VPSidebar {
-    padding:calc(var(--vp-nav-height) - 5px) 16px 48px 16px !important;
 }
 
 .VPSidebarItem {
