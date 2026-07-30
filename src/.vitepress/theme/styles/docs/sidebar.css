@@ -14,9 +14,8 @@
 }
 
 .VPSidebar{
-    background: rgba(255, 255, 255, 0.2) !important;
-    backdrop-filter: blur(6px) saturate(180%);
-    -webkit-backdrop-filter: blur(2px);
+    background: var(--zm-background-low) !important;
+    backdrop-filter: var(--zm-backdrop-blur-low);
     border: 1px solid rgba(255, 255, 255, 0.3);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
     border-radius: 0 0 16px 0;
@@ -37,7 +36,8 @@
 .group{
     border-top-color: transparent !important;
     margin: 0 auto;
-
+    padding-top:0 !important;
+    padding-bottom:5px;
 }
 
 /* 侧边栏主项目 */
@@ -46,9 +46,9 @@
 }
 
 .VPSidebarItem:not(.collapsed).collapsible, .VPSidebarItem.level-0.collapsible.collapsed {
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(12px) saturate(180%);
-    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    background: var(--zm-background-low);
+    backdrop-filter: var(--zm-backdrop-blur-medium);
+    -webkit-backdrop-filter: var(--zm-backdrop-blur-medium-webkit);
     border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 16px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
@@ -106,7 +106,7 @@
 }
 
 .VPSidebar {
-    padding:64px 16px 48px 16px !important;
+    padding:calc(var(--vp-nav-height) - 5px) 16px 48px 16px !important;
 }
 
 .VPSidebarItem {

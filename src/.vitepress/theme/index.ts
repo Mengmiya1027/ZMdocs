@@ -1,9 +1,9 @@
 import DefaultTheme from 'vitepress/theme'
-import { watch } from 'vue'
+import { onMounted , watch } from 'vue'
 
 // 已封装的工具
 import { autoHeroImageTilt } from './utils/heroImageTilt'
-import { applyNavbarStyle } from './utils/NavbarStyle'
+import { applyNavbarAnd404Style } from './utils/Navbar-and-404-Style'
 import { useSidebarHeight } from "./utils/useSidebarHeight";
 
 // 主题统一入口
@@ -18,13 +18,13 @@ export default {
             autoHeroImageTilt(router, 960)
 
             const updateStyles = () => {
-                const route = router.route
-                const isHome = route.path === '/'
-                const isNotFound = route.data?.isNotFound === true
-                const useHomeStyle = isHome || isNotFound
-                applyNavbarStyle(useHomeStyle)
-                applySidebarHeight()
-            }
+                const route = router.route;
+                const isHome = route.path === '/';
+                const isNotFound = route.data?.isNotFound === true;
+                const useHomeStyle = isHome || isNotFound;
+                applyNavbarAnd404Style(useHomeStyle, isNotFound);
+                applySidebarHeight();
+            };
             if (typeof router.onAfterRouteChanged === 'function') {
                 router.onAfterRouteChanged(updateStyles)
             } else {

@@ -1,8 +1,7 @@
 /* hero */
 .container:has(> .main) {
-    background: rgba(255, 255, 255, 0.4);
-    backdrop-filter: blur(12px) saturate(180%);
-    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    background: var(--zm-background-medium);
+    backdrop-filter: var(--zm-backdrop-blur-medium);
     border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 16px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
@@ -11,11 +10,10 @@
     max-width: 1312px;
 }
 
-/*主页下方features*/
+/*主页下方features和菜单*/
 .VPFeature {
-    background: rgba(255, 255, 255, 0.4) !important;
-    backdrop-filter: blur(12px) saturate(180%);
-    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    background: var(--zm-background-medium) !important;
+    backdrop-filter: var(--zm-backdrop-blur-medium);
     border: 1px solid rgba(255, 255, 255, 0.3) !important;
     border-radius: 16px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
@@ -23,16 +21,24 @@
 
 
 .backdrop {
-    backdrop-filter: blur(4px) saturate(180%);
+    backdrop-filter: var(--zm-backdrop-blur-low);
 }
 
 .shell,.search-bar {
-    background: rgba(255, 255, 255, 0.7) !important;
-    backdrop-filter: blur(12px) saturate(180%) !important;
-    -webkit-backdrop-filter: blur(12px) saturate(180%) !important;
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    background: var(--zm-background-high) !important;
+    backdrop-filter: var(--zm-backdrop-blur-medium) !important;
+    border: 2px solid rgba(255, 255, 255, 0.3) !important;
     border-radius: 16px !important;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+    transition: border 0.2s ease;
+}
+
+.shell {
+    width: min(100vw - 60px, 700px) !important;
+}
+
+.search-bar:focus-within {
+    border: 2px solid var(--vp-c-brand-1) !important;
 }
 
 .search-bar {
@@ -41,9 +47,8 @@
 }
 
 .search-keyboard-shortcuts {
-    background: rgba(255, 255, 255, 0.7) !important;
-    backdrop-filter: blur(12px) saturate(180%) !important;
-    -webkit-backdrop-filter: blur(12px) saturate(180%) !important;
+    background: var(--zm-background-high) !important;
+    backdrop-filter: var(--zm-backdrop-blur-medium) !important;
     border: 1px solid rgba(255, 255, 255, 1) !important;
     border-radius: 16px !important;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
@@ -51,4 +56,21 @@
     justify-content: center;
     width: fit-content;
     margin: 0 auto;
+}
+
+/* 404界面 */
+.NotFound {
+    background: var(--zm-background-medium);
+    backdrop-filter: var(--zm-backdrop-blur-medium);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.NotFound .action .link{
+    background: var(--zm-background-medium);
+    backdrop-filter: var(--zm-backdrop-blur-medium);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
 }

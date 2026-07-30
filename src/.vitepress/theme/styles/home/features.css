@@ -16,3 +16,33 @@
         z-index: 2;
     }
 }
+
+
+/* 让每个 feature 卡片使用 Grid 布局 */
+.VPFeature .box {
+    display: grid !important;
+    grid-template-columns: auto 1fr;    /* 第一列自适应图标宽度，第二列占满剩余空间 */
+    grid-template-rows: auto auto;      /* 第一行放 icon+title，第二行放 details */
+    gap: 0 16px;                        /* 列间距 16px，行间距由下方 margin 控制 */
+    align-items: center;               /* 第一行内所有元素垂直居中 */
+}
+
+/* 图标放在第一行第一列 */
+.VPFeature .box .icon {
+    grid-column: 1;
+    grid-row: 1;
+    margin-bottom: 0;
+}
+
+/* 标题放在第一行第二列，并清除默认外边距 */
+.VPFeature .box .title {
+    grid-column: 2;
+    grid-row: 1;
+    font-size: 18px;
+}
+
+/* 描述文字放在第二行，横跨两列 */
+.VPFeature .box .details {
+    grid-column: 1 / -1;
+    grid-row: 2;
+}

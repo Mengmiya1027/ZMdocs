@@ -3,7 +3,7 @@
 }
 
 .curtain,.content-body {
-    background-color: rgba(0,0,0,0) !important;
+    background: none !important;
 }
 
 .content {
@@ -11,32 +11,16 @@
 }
 
 .content-body {
-    background: rgba(255, 255, 255, 0.4) !important;
-    backdrop-filter: blur(12px) saturate(180%);
-    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    background: var(--zm-background-medium) !important;
+    backdrop-filter: var(--zm-backdrop-blur-medium);
+    -webkit-backdrop-filter: var(--zm-backdrop-blur-medium-webkit);
     border: 1px solid rgba(255, 255, 255, 0.3) !important;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    border-left: none !important;
+    box-shadow: 10px 8px 40px -10px rgba(0, 0, 0, 0.5) !important; /* 右侧偏移 + 负扩展隐藏左侧阴影 */
     padding-right: 32px !important;
     max-width: 100% !important;
     z-index: 1;
     border-radius: 0 0 16px 0;
-}
-
-.title:has(> .VPImage){
-    border: none;
-    /*noinspection CssUnresolvedCustomProperty*/
-    height: calc(var(--vp-nav-height) / 1.5);
-    justify-content: center;
-    padding:0 20px 0 10px;
-    border-radius: 16px !important;
-}
-
-.title:has(> .VPImage):hover{
-    background-color: rgba(0, 0, 0, 0.08) !important;
-}
-
-.title:has(> .VPImage):active{
-    background-color: rgba(0, 0, 0, 0.2) !important;
 }
 
 .VPNavBarTitle.has-sidebar{

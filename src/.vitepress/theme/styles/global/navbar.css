@@ -1,0 +1,41 @@
+.title:has(> .VPImage):hover{
+    background-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+.title:has(> .VPImage):active{
+    background-color: rgba(0, 0, 0, 0.2) !important;
+}
+
+/*不要分割线*/
+.divider:has(> .divider-line) {
+    display: none;
+}
+
+.title:has(> .VPImage){
+    /*noinspection CssUnresolvedCustomProperty*/
+    height: calc(var(--vp-nav-height) / 1.5);
+    justify-content: center;
+    padding:0 20px 0 10px;
+    border-radius: 16px !important;
+    /*noinspection CssUnresolvedCustomProperty*/
+    border: none;
+}
+
+.VPLink.link.VPNavBarMenuLink{
+    padding: 8px 12px !important;
+    margin: 6px;
+    line-height: normal !important;
+    border-radius: 12px !important;
+}
+
+.VPLink.link.VPNavBarMenuLink:hover{
+    background-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+.VPLink.link.VPNavBarMenuLink:active{
+    background-color: rgba(0, 0, 0, 0.2) !important;
+}
+
+.VPMenu {
+    border: none !important;
+}

@@ -1,10 +1,31 @@
 :root{
     --vp-button-alt-hover-bg: #dddde3;
     --vp-button-alt-active-bg: #bebec3;
+
+    --vp-c-divider: var(--vp-c-text-1);
+    --vp-nav-height: 48px;
+
+    --zm-backdrop-blur-low: blur(6px) saturate(180%);
+    --zm-backdrop-blur-medium: blur(12px) saturate(180%);
+    /* 下方这一个变量只适用于dynamic当中的动态css */
+    /* 对于全局引入的css的属性，不要写webkit版本。Vite会自动帮你加 */
+    /* 如果全局css写了webkit会导致无webkit版本丢失问题 */
+
+    --zm-backdrop-blur-low-webkit: var(--zm-backdrop-blur-low);
+    --zm-backdrop-blur-medium-webkit: var(--zm-backdrop-blur-medium);
+
+    --zm-background-low: rgba(255, 255, 255, 0.2);
+    --zm-background-medium: rgba(255, 255, 255, 0.4);
+    --zm-background-high: rgba(255, 255, 255, 0.7);
+
 }
 
 .dark{
     --vp-button-alt-bg: #4b515e;
     --vp-button-alt-hover-bg: #393d47;
     --vp-button-alt-active-bg: #262a30;
+    --vp-c-brand-1: #3451b2;
+    --vp-c-text-1: rgba(255, 255, 255, 1);
+    --vp-c-text-2: rgba(255, 255, 255, 0.7);
+
 }

@@ -15,3 +15,16 @@ html::-webkit-scrollbar-thumb {
     border-radius: 50%;
     transition: all 0.2s;
 }
+
+.VPNavBarTitle .title span{
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.dark{
+    .VPImage.logo{
+        box-shadow: 0 1px 10px rgba(255, 255, 255, 0.8);
+    }
+    .VPNavBarTitle .title span{
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+    }
+}

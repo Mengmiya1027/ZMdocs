@@ -1,0 +1,30 @@
+.VPContent{
+    width: fit-content !important;
+    width: -webkit-fit-content !important;
+}
+
+.NotFound{
+    padding: 20px !important;
+    margin: 96px 32px 168px;
+}
+
+/*提示语*/
+.NotFound .code,.NotFound .title {
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.dark{
+    .NotFound .code,.NotFound .title {
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+    }
+}
+
+/*返回按钮*/
+.NotFound .action .link:hover {
+    transform: scale(1.05);
+    background-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+.NotFound .action .link:active {
+    background-color: rgba(0, 0, 0, 0.2) !important;
+}

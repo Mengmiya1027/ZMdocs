@@ -3,14 +3,28 @@ html {
     container-type: scroll-state;
 }
 
+:root{
+    --vp-nav-height: 48px;
+}
+
+.VPNavBar.home{
+    background: none !important;
+    border-bottom: none !important;
+    transition: all 0.15s ease;
+}
+
+.VPNavBar{
+    background: none !important;
+}
+
 .container:has(> .title){
-    background: rgba(255, 255, 255, 0.4) !important;
-    backdrop-filter: blur(12px) saturate(180%);
-    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    background: var(--zm-background-medium) !important;
+    backdrop-filter: var(--zm-backdrop-blur-medium);
+    -webkit-backdrop-filter: var(--zm-backdrop-blur-medium-webkit);
     border: 1px solid rgba(255, 255, 255, 0.3) !important;
     border-radius: 16px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    padding:0 20px !important;
+    padding:0 20px 0 10px !important;
     margin-top: 20px !important;
     transition: margin 0.15s ease, border-radius 0.15s ease;
     max-width: none;
@@ -53,17 +67,6 @@ html {
     }
 }
 
-.VPNavBar.home{
-    background: none !important;
-    border-bottom: none !important;
-}
-
-.VPNavBar {
-    background: none
-    !important;
-}
-
-/*不要分割线*/
-.divider:has(> .divider-line) {
-    display: none;
+.title:has(> .VPImage) {
+    margin-top: calc(var(--vp-nav-height) / 6);
 }
