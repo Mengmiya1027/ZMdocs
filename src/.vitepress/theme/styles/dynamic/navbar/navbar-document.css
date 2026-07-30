@@ -1,3 +1,45 @@
 .wrapper:has(> .container),.container:has(> .title){
     transition: all 0.3s ease;
 }
+
+.curtain,.content-body {
+    background-color: rgba(0,0,0,0) !important;
+}
+
+.content {
+    padding-right: 0 !important;
+}
+
+.content-body {
+    background: rgba(255, 255, 255, 0.4) !important;
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    padding-right: 32px !important;
+    max-width: 100% !important;
+    z-index: 1;
+    border-radius: 0 0 16px 0;
+}
+
+.title:has(> .VPImage){
+    border: none;
+    /*noinspection CssUnresolvedCustomProperty*/
+    height: calc(var(--vp-nav-height) / 1.5);
+    justify-content: center;
+    padding:0 20px 0 10px;
+    border-radius: 16px !important;
+}
+
+.title:has(> .VPImage):hover{
+    background-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+.title:has(> .VPImage):active{
+    background-color: rgba(0, 0, 0, 0.2) !important;
+}
+
+.VPNavBarTitle.has-sidebar{
+    /*noinspection CssUnresolvedCustomProperty*/
+    padding-top: calc(var(--vp-nav-height) / 6)
+}

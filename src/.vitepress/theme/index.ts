@@ -1,5 +1,5 @@
 import DefaultTheme from 'vitepress/theme'
-import { onMounted } from 'vue'
+import { watch } from 'vue'
 
 // 已封装的工具
 import { autoHeroImageTilt } from './utils/heroImageTilt'
@@ -11,19 +11,25 @@ import "./styles/index.css"
 
 export default {
     ...DefaultTheme,
-    enhanceApp({ router }) {
-        // 侧边栏高度管理器
-        const { applySidebarHeight, cleanup } = useSidebarHeight(false) // debug: false
+    enhanceApp({ app, router }) {
+        const { applySidebarHeight, cleanup } = useSidebarHeight(false)
 
-        if ( typeof window !== 'undefined' ) {
-            autoHeroImageTilt(router, 960);
-            const originalOnAfterRouteChange = router.onAfterRouteChange
-            router.onAfterRouteChange = () => {
-                originalOnAfterRouteChange?.()
-                applyNavbarStyle()
+        if (typeof window !== 'undefined') {
+            autoHeroImageTilt(router, 960)
+
+            const updateStyles = () => {
+                const route = router.route
+                const isHome = route.path === '/'
+                const isNotFound = route.data?.isNotFound === true
+                const useHomeStyle = isHome || isNotFound
+                applyNavbarStyle(useHomeStyle)
                 applySidebarHeight()
             }
-            applyNavbarStyle();
+            if (typeof router.onAfterRouteChanged === 'function') {
+                router.onAfterRouteChanged(updateStyles)
+            } else {
+                watch(() => router.route, updateStyles, { deep: true, immediate: true })
+            }
         }
     }
 }

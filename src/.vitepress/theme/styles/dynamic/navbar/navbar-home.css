@@ -32,7 +32,15 @@ html {
         padding: 0 64px;
     }
 }
-@media(max-width: 959px){}
+@media(max-width: 959px){
+    .wrapper:has(> .container){
+        padding: 0 12px;
+        will-change: padding;
+    }
+    .VPNav{
+        position: sticky !important;
+    }
+}
 
 @container scroll-state(scrollable: top) {
     .container:has(> .title){
@@ -48,6 +56,11 @@ html {
 .VPNavBar.home{
     background: none !important;
     border-bottom: none !important;
+}
+
+.VPNavBar {
+    background: none
+    !important;
 }
 
 /*不要分割线*/

@@ -83,7 +83,7 @@ export function useHeroImageTilt(): Promise<() => void> {
                 if (observer && !resolved) {
                     observer.disconnect();
                     observer = null;
-                    console.warn('Hero 图片未找到，放弃动效');
+                    // console.warn('Hero 图片未找到，放弃动效');
                     resolve(() => {});
                 }
             }, 10000);
@@ -218,10 +218,10 @@ export function useHeroImageTilt(): Promise<() => void> {
                     imgEl.style.willChange = originalWillChange;
                     imgEl.style.transition = originalTransition;
                 }
-                console.log('动效已销毁');
+                // console.log('动效已销毁');
             }
 
-            console.log('动效已初始化，等待鼠标移入');
+            // console.log('动效已初始化，等待鼠标移入');
             onReady(destroy);
         }
 
@@ -254,7 +254,7 @@ export function autoHeroImageTilt(router: any, mobileBreakpoint = 768): () => vo
             try {
                 destroyEffect = await useHeroImageTilt();
             } catch (e) {
-                console.error('Hero tilt init failed', e);
+                // console.error('Hero tilt init failed', e);
             }
         })();
         initPromise = p;
