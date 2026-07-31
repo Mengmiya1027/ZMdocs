@@ -83,6 +83,31 @@
     }
 }
 
+.VPDocOutlineItem.root{
+    max-width: 100%;
+}
+
+.VPDocAside{
+    flex-direction: row !important;
+    width: 100%;
+    align-items: center;
+    padding-bottom: var(--vp-nav-height);
+}
+
+.VPDocAsideOutline.has-outline{
+    height: fit-content !important;
+    max-width: 100%;
+}
+
+.content:has(> .VPDocOutlineItem.root){
+    padding : 0 16px 16px 16px !important;
+    border-radius: 16px;
+}
+
+.aside-curtain {
+    display: none;
+}
+
 .VPLocalNavOutlineDropdown button:active, .top-link:active {
     background-color: rgba(0, 0, 0, 0.2) !important;
 }
