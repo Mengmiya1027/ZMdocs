@@ -35,9 +35,9 @@ const dismiss = () => {
 }
 
 onMounted(() => {
-  // 入场动画：等首屏资源加载完成再收起，
-  // 并保留一个最短展示时长，让旋转动画被看到；
-  // 用兜底计时防止 load 事件迟迟不触发导致幕布卡死。
+  // 入场动画在组件挂载时立即播放一次；
+  // 退场在首屏资源加载完成后触发，并保留一个最短展示时长，
+  // 让旋转 / 入场动画被看到；用兜底计时防止 load 迟迟不触发导致卡死。
   const minShow = 900 // ms，最短展示时长
   const hardCap = 2600 // ms，最长兜底
 
@@ -63,6 +63,17 @@ onMounted(() => {
   z-index: 9999;
   overflow: hidden;
   background: var(--vp-c-bg, #1b1b1f);
+
+  // 入场光晕：中心白光从内向外扩散再淡出，营造"点亮"感
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, rgba(255, 255, 255, 0.18), transparent 62%);
+    opacity: 0;
+    pointer-events: none;
+    animation: flash-in 0.85s ease both;
+  }
 
   // 加载完成：有冲击力的退场——
   // logo 向前冲刺放大 + 高光闪一下 + 模糊消散，
@@ -103,6 +114,8 @@ onMounted(() => {
       position: relative;
       width: 150px;
       height: 150px;
+      // 入场：整组从中心弹入（带回弹），与退场炸开形成"聚—散"对比
+      animation: ring-in 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 
       .loader-circle {
         position: absolute;
@@ -150,6 +163,8 @@ onMounted(() => {
         border-radius: 50%;
         object-fit: cover;
         z-index: 3;
+        // 入场：logo 从小放大 + 高光闪入
+        animation: logo-in 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both;
       }
     }
 
@@ -161,6 +176,8 @@ onMounted(() => {
       z-index: 2;
       margin-top: 40px;
       font-size: 24px;
+      // 入场：文字上移淡入（稍延迟，等环和 logo 落定）
+      animation: text-in 0.6s ease 0.15s both;
       .tip {
         margin-top: 6px;
         font-size: 18px;
@@ -185,6 +202,71 @@ onMounted(() => {
   }
   100% {
     transform: rotate(-360deg);
+  }
+}
+
+// 入场：圆环整组从中心弹入（内向汇聚，与退场炸开呼应）
+@keyframes ring-in {
+  0% {
+    transform: scale(0.55) rotate(-30deg);
+    opacity: 0;
+    filter: blur(6px);
+  }
+  60% {
+    transform: scale(1.06) rotate(8deg);
+    opacity: 1;
+    filter: blur(0);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+// 入场：logo 从小放大 + 高光闪入
+@keyframes logo-in {
+  0% {
+    transform: translate(-50%, -50%) scale(0.3);
+    opacity: 0;
+    filter: brightness(2.2) blur(8px);
+  }
+  60% {
+    transform: translate(-50%, -50%) scale(1.12);
+    opacity: 1;
+    filter: brightness(1.5) blur(0);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+    filter: brightness(1) blur(0);
+  }
+}
+
+// 入场：文字上移淡入
+@keyframes text-in {
+  0% {
+    transform: translateY(18px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+// 入场：中心光晕从内扩散后淡出
+@keyframes flash-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  40% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.4);
   }
 }
 
