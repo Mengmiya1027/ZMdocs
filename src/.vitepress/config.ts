@@ -47,7 +47,7 @@ export default defineConfig({
     ],
 
     editLink: {
-      pattern: 'https://github.com/Mengmiya1027/edit/main/src/:path',
+      pattern: 'https://github.com/Mengmiya1027/ZMdocs/edit/main/src/:path',
       text: '在 GitHub 上编辑此页面'
     },
 

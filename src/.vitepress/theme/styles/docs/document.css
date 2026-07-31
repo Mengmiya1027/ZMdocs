@@ -14,3 +14,14 @@
 .VPLink.link.no-icon.edit-link-button:active{
     background-color: rgba(0, 0, 0, 0.2) !important;
 }
+
+@media(max-width: 640px){
+    .VPLink.link.no-icon.edit-link-button,.VPLastUpdated,.edit-info{
+        width: fit-content !important;
+        margin: auto;
+        line-height: 32px !important;
+    }
+    .edit-info{
+        padding: 5px 10px !important;
+    }
+}

@@ -46,10 +46,12 @@ html {
         padding: 0 64px;
     }
 }
+
 @media(max-width: 960px){
     .wrapper:has(> .container){
         padding: 0 12px;
         will-change: padding;
+        transition: padding 0.3s ease;
     }
     .VPNav{
         position: sticky !important;
@@ -58,11 +60,17 @@ html {
         /*noinspection CssUnresolvedCustomProperty*/
         padding-top: calc(var(--vp-nav-height) + var(--vp-layout-top-height, 0px) + 20px) !important;
     }
+    .VPHero{
+        transition: padding 0.3s ease;
+    }
+    .container:has(> .title){
+        transition: margin 0.3s ease ,border-radius 1s ease;
+    }
 }
 
 @media(max-width: 768px){
-    .wrapper:has(> .container),.VPNavBar.home,.container:has(> .title),.VPNav{
-        transition: none !important;
+    .container:has(> .title){
+        padding: 0 2px !important;
     }
 }
 
@@ -74,6 +82,11 @@ html {
     }
     .wrapper:has(> .container){
         padding:0;
+    }
+    @media(max-width: 768px){
+        .VPHero{
+            padding-top: calc(var(--vp-nav-height) + var(--vp-layout-top-height, 0px) + 68px) !important;
+        }
     }
 }
 

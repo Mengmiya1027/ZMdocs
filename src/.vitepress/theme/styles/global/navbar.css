@@ -1,20 +1,9 @@
-.title:has(> .VPImage):hover{
-    background-color: rgba(0, 0, 0, 0.08) !important;
-}
-
-.title:has(> .VPImage):active{
-    background-color: rgba(0, 0, 0, 0.2) !important;
-}
-
 /*不要分割线*/
 .divider:has(> .divider-line) {
     display: none;
 }
 
 @media(max-width: 960px){
-    .divider:has(> .divider-line) {
-        display: block;
-    }
     .divider-line{
         background-color: var(--vp-button-alt-bg) !important;
         width: 90% !important;
@@ -57,7 +46,6 @@
     justify-content: center;
     padding:0 20px 0 10px;
     border-radius: 16px !important;
-    /*noinspection CssUnresolvedCustomProperty*/
     border: none;
 }
 
@@ -68,8 +56,18 @@
     border-radius: 12px !important;
 }
 
-.VPLink.link.VPNavBarMenuLink:hover{
-    background-color: rgba(0, 0, 0, 0.08) !important;
+@media(min-width: 960px){
+    .VPLink.link.VPNavBarMenuLink:hover{
+        background-color: rgba(0, 0, 0, 0.08) !important;
+    }
+    .title:has(> .VPImage):hover{
+        background-color: rgba(0, 0, 0, 0.08) !important;
+    }
+
+}
+
+.title:has(> .VPImage):active{
+    background-color: rgba(0, 0, 0, 0.2) !important;
 }
 
 .VPLink.link.VPNavBarMenuLink:active{
@@ -78,4 +76,13 @@
 
 .VPMenu {
     border: none !important;
+}
+
+@media(max-width: 768px){
+    .shell{
+        margin: 48px auto !important;
+        height: fit-content !important;
+        max-height: calc(100vh - 48px);
+        transition: margin 0.15s ease;
+    }
 }
