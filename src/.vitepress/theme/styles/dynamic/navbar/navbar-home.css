@@ -50,8 +50,7 @@ html {
 @media(max-width: 960px){
     .wrapper:has(> .container){
         padding: 0 12px;
-        will-change: padding;
-        transition: padding 0.3s ease;
+        transition: none;
     }
     .VPNav{
         position: sticky !important;
@@ -60,11 +59,8 @@ html {
         /*noinspection CssUnresolvedCustomProperty*/
         padding-top: calc(var(--vp-nav-height) + var(--vp-layout-top-height, 0px) + 20px) !important;
     }
-    .VPHero{
-        transition: padding 0.3s ease;
-    }
     .container:has(> .title){
-        transition: margin 0.3s ease ,border-radius 1s ease;
+        transition: none;
     }
 }
 

@@ -28,6 +28,43 @@
     padding-top: calc(var(--vp-nav-height) / 6)
 }
 
+.VPLocalNav{
+    background: none !important;
+}
+
+.items:has(> .header){
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border-radius: 16px;
+}
+
+.outline, .header {
+    background-color: transparent !important;
+}
+
+.nested{
+    padding: 3px 3px 4px !important;
+}
+
+.VPDocOutlineItem li{
+    border-radius: 16px !important;
+    padding: 0 16px !important;
+}
+
+@media(min-width: 960px){
+    .VPDocOutlineItem li{
+        transition: all 0.25s ease !important;
+    }
+    .VPDocOutlineItem li:hover{
+        background-color: rgba(0, 0, 0, 0.08) !important;
+    }
+}
+
+
+.VPDocOutlineItem li:active {
+    background-color: rgba(0, 0, 0, 0.2) !important;
+}
+
 @media(max-width: 960px) {
     .VPLocalNav.has-sidebar{
         background: var(--zm-background-medium) !important;
@@ -82,13 +119,16 @@
         background-color: rgba(0, 0, 0, 0.2) !important;
         border-radius: 16px !important;
         padding: 4px 12px;
-        margin: 8px 12px 7px;
+        margin: 8px 20px 7px;
     }
-
 }
 
 @media(max-width: 768px) {
-    .wrapper:has(> .container){
+    .wrapper:has(> .container) {
         padding-left: 8px !important;
+    }
+
+    .menu:active, .VPLocalNavOutlineDropdown button:active {
+        margin: 8px 12px 7px;
     }
 }
