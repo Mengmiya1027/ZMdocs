@@ -9,8 +9,12 @@ import { useSidebarHeight } from "./utils/useSidebarHeight";
 // 主题统一入口
 import "./styles/index.css"
 
+// 自定义 Layout：在默认布局之上叠加「入场动画」幕布
+import Layout from "./Layout.vue"
+
 export default {
     ...DefaultTheme,
+    Layout,
     enhanceApp({ app, router }) {
         const { applySidebarHeight, cleanup } = useSidebarHeight(false)
 
