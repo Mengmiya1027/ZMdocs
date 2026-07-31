@@ -148,7 +148,7 @@
 @media (min-width: 1440px) {
     /* 侧边栏：宽度固定 + 左缘贴边 + 取消左侧大留白（否则导航会被挤到右侧窄条） */
     .VPSidebar {
-        width: var(--vp-sidebar-width) !important;   /* 272px，不再随屏变宽 */
+        width: 272px !important;   /* 272px，不再随屏变宽 */
         max-width: 100% !important;
         padding-left: 32px !important;               /* 还原基准左内边距 */
     }
@@ -162,7 +162,7 @@
        限制 max-width 并 margin:0 auto，使其在「侧边栏右侧的可用区域」内水平居中，
        左右留白对称，不再贴边。 */
     .VPContent.has-sidebar {
-        padding-left: var(--vp-sidebar-width) !important;
+        padding-left: 272px !important;
     }
     .VPDoc.has-sidebar .content-container {
         max-width: 790px !important;
@@ -175,14 +175,14 @@
        否则 logo 会被推到侧边栏右缘/内容区，与固定后的侧边栏错位。
        修正后与 ≤1439px 表现一致：logo 回到侧边栏左上角表头区。 */
     .VPNavBar.has-sidebar .title {
-        width: var(--vp-sidebar-width) !important;   /* 272px */
+        width: 272px !important;   /* 272px */
     }
     .VPNavBar.has-sidebar .content {
-        padding-left: var(--vp-sidebar-width) !important;
+        padding-left: 272px !important;
         padding-right: 32px !important;
     }
     .VPNavBar.has-sidebar .divider {
-        padding-left: var(--vp-sidebar-width) !important;
+        padding-left: 272px !important;
     }
 }
 
