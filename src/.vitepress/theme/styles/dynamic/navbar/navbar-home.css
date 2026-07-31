@@ -46,13 +46,23 @@ html {
         padding: 0 64px;
     }
 }
-@media(max-width: 959px){
+@media(max-width: 960px){
     .wrapper:has(> .container){
         padding: 0 12px;
         will-change: padding;
     }
     .VPNav{
         position: sticky !important;
+    }
+    .VPNavScreen{
+        /*noinspection CssUnresolvedCustomProperty*/
+        padding-top: calc(var(--vp-nav-height) + var(--vp-layout-top-height, 0px) + 20px) !important;
+    }
+}
+
+@media(max-width: 768px){
+    .wrapper:has(> .container),.VPNavBar.home,.container:has(> .title),.VPNav{
+        transition: none !important;
     }
 }
 

@@ -1,11 +1,9 @@
-/* 1. 设置亮色模式背景 */
-html:not(.dark) .Layout {
+html:not(.dark) .Layout, .VPNavScreen {
     background: url('/images/basic/bg-2.png') no-repeat center center fixed;
     background-size: cover;
 }
 
-/* 2. 设置暗色模式背景 */
-html.dark .Layout {
+html.dark .Layout,html.dark .VPNavScreen {
     background: url('/images/basic/bg-2-dark.png') no-repeat center center fixed;
     background-size: cover;
 }

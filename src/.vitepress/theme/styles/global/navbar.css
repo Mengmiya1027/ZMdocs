@@ -11,6 +11,46 @@
     display: none;
 }
 
+@media(max-width: 960px){
+    .divider:has(> .divider-line) {
+        display: block;
+    }
+    .divider-line{
+        background-color: var(--vp-button-alt-bg) !important;
+        width: 90% !important;
+        margin:0 auto;
+    }
+
+    .VPNavBar{
+        position: relative; /* 触发层叠上下文，使 z-index 生效 */
+        z-index: 1;         /* 必须大于 .VPNavScreen 的 z-index（0） */
+    }
+
+    .VPNav{
+        position: relative;
+    }
+
+    .VPNavScreen{
+        position: absolute !important;
+        top: 0 !important;
+        width: 100%;
+        height: 100vh;
+        z-index: 0;
+    }
+
+    .VPLink.link.VPNavScreenMenuLink{
+        position: relative;
+        padding: 6px 6px 6px !important;
+        margin: 6px 0 5px;
+        border-radius: 12px !important;
+        border-bottom: none !important;
+    }
+
+    .VPLink.link.VPNavScreenMenuLink:active{
+        background-color: rgba(0, 0, 0, 0.2) !important;
+    }
+}
+
 .title:has(> .VPImage){
     /*noinspection CssUnresolvedCustomProperty*/
     height: calc(var(--vp-nav-height) / 1.5);
