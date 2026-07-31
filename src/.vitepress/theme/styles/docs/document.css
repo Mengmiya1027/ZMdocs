@@ -25,3 +25,9 @@
         padding: 5px 10px !important;
     }
 }
+
+@media(max-width: 1279px ) and (min-width: 961px){
+    .VPContent.has-sidebar{
+        padding-top: 0 !important;
+    }
+}
