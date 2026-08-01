@@ -5,6 +5,7 @@ import { onMounted , watch } from 'vue'
 import { autoHeroImageTilt } from './utils/heroImageTilt'
 import { applyNavbarAnd404Style } from './utils/Navbar-and-404-Style'
 import { useSidebarHeight } from "./utils/useSidebarHeight";
+import { setupOutlineSmoothScroll } from "./utils/outlineScroll";
 
 // 主题统一入口
 import "./styles/index.css"
@@ -20,6 +21,7 @@ export default {
 
         if (typeof window !== 'undefined') {
             autoHeroImageTilt(router, 960)
+            setupOutlineSmoothScroll()
 
             const updateStyles = () => {
                 const route = router.route;

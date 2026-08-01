@@ -1,0 +1,35 @@
+/* 右侧大纲（进度条）导航点击后的平滑动画 + 目标标题高亮 */
+
+/* 让锚点定位避开固定导航栏，避免标题被遮住 */
+.vp-doc :is(h1, h2, h3, h4, h5, h6) {
+    scroll-margin-top: calc(var(--vp-nav-height, 48px) + 24px);
+}
+
+/* 目标标题高亮：类似荧光笔扫过 + 轻微描边淡出 */
+.zm-heading-flash {
+    animation: zmHeadingFlash 0.9s ease-out;
+    border-radius: 6px;
+    /* 用负 margin 抵消 padding，避免布局抖动 */
+    padding: 2px 10px;
+    margin: -2px -10px;
+}
+
+@keyframes zmHeadingFlash {
+    0% {
+        background-color: var(--zm-flash-bg, rgba(52, 81, 178, 0.14));
+        box-shadow: 0 0 0 4px var(--zm-flash-ring, rgba(52, 81, 178, 0.3));
+    }
+    60% {
+        background-color: var(--zm-flash-bg, rgba(52, 81, 178, 0.14));
+        box-shadow: 0 0 0 4px transparent;
+    }
+    100% {
+        background-color: transparent;
+        box-shadow: 0 0 0 4px transparent;
+    }
+}
+
+.dark {
+    --zm-flash-bg: rgba(125, 145, 220, 0.18);
+    --zm-flash-ring: rgba(125, 145, 220, 0.38);
+}
