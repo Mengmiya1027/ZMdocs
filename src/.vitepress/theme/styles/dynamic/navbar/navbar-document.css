@@ -11,8 +11,8 @@
 }
 
 .content-body {
-    background: var(--zm-background-medium) !important;
-    backdrop-filter: var(--zm-backdrop-blur-medium);
+    background: var(--zm-background-low) !important;
+    backdrop-filter: var(--zm-backdrop-blur-low);
     -webkit-backdrop-filter: var(--zm-backdrop-blur-medium-webkit);
     border: 1px solid rgba(255, 255, 255, 0.3) !important;
     border-left: none !important;
@@ -62,6 +62,10 @@
 
 
 .VPDocOutlineItem li:active {
+    background-color: rgba(0, 0, 0, 0.2) !important;
+}
+
+.menu:has(.menu-icon):active,.VPLocalNavOutlineDropdown button:active, .top-link:active{
     background-color: rgba(0, 0, 0, 0.2) !important;
 }
 
@@ -115,8 +119,7 @@
         display: block;
     }
 
-    .menu:active,.VPLocalNavOutlineDropdown button:active{
-        background-color: rgba(0, 0, 0, 0.2) !important;
+    .menu:has(.menu-icon):active,.VPLocalNavOutlineDropdown button:active{
         border-radius: 16px !important;
         padding: 4px 12px;
         margin: 8px 20px 7px;

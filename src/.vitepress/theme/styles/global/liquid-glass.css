@@ -109,7 +109,6 @@
 
 .top-link ,.VPDocOutlineItem{
     line-height: normal !important;
-    width: fit-content;
     border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 16px;
     font-weight: 600 !important;
@@ -118,14 +117,12 @@
 
 .top-link{
     margin: 7px auto 0 !important;
+    width: fit-content;
 }
 
-.VPDocOutlineItem{
-    margin: 0 auto;
-}
 
 /*文档液态玻璃*/
-.content-container:has(> .main) :is(p, h1, h2, h3, h4, h5, h6) {
+.content-container:has(> .main) :is(p, h1, h2, h3, h4, h5, h6, ul):not(.VPLastUpdated) {
     background: var(--zm-background-medium); /* 半透明白底 */
     backdrop-filter: var(--zm-backdrop-blur-medium); /* 模糊 + 色彩增强 */
 
@@ -135,18 +132,6 @@
 
     /* 和相邻段落拉开距离 */
     margin-bottom: 1.5rem;
-}
-
-.content-container:has(> .main) p {
-    padding: 0.5em;
-}
-
-.content-container:has(> .main) h1 {
-    text-align: center;
-}
-
-.content-container:has(> .main) :is(h1, h2, h3, h4, h5, h6) {
-    padding: 0.2em;
 }
 
 @media(max-width: 768px){

@@ -15,6 +15,52 @@
     background-color: rgba(0, 0, 0, 0.2) !important;
 }
 
+.content-container:has(> .main) p {
+    padding: 0.2em 0.8em;
+}
+
+.content-container:has(> .main) ul {
+    padding: 0.2em 1.5em;
+}
+
+.content-container:has(> .main) :is(h1, h2) {
+    margin: 0 auto;
+}
+
+.content-container:has(> .main) :is(h1, h2, h3, h4, h5, h6) {
+    padding: 0.2em 0.5em;
+    text-align: center;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.align-right {
+    text-align: right;
+}
+
+.align-center {
+    text-align: center;
+}
+
+.compact-left {
+    width: fit-content !important;
+    margin-left: 0 !important;
+    margin-right: auto !important;
+}
+
+.compact-right {
+    width: fit-content !important;
+    margin-right: 0 !important;
+    margin-left: auto !important;
+}
+
+.compact-center {
+    width: fit-content !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
 @media(max-width: 640px){
     .VPLink.link.no-icon.edit-link-button,.VPLastUpdated,.edit-info{
         width: fit-content !important;
@@ -27,7 +73,7 @@
 }
 
 @media(max-width: 1279px ) and (min-width: 961px){
-    .VPContent.has-sidebar{
+    .Layout:has(.VPLocalNav.has-sidebar:not(.empty)) .VPContent.has-sidebar{
         padding-top: 0 !important;
     }
 }

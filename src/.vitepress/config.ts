@@ -1,7 +1,9 @@
 import { defineConfig } from 'vitepress'
 import { generateSidebar } from './theme/utils/sidebarGenerator.js'
+// @ts-ignore
 import path from 'path'
 
+// @ts-ignore
 export default defineConfig({
   title: "ZMdocs",
   titleTemplate: "稚梦 · 随意写，随意看",
@@ -29,10 +31,12 @@ export default defineConfig({
     logo: '/images/basic/zm.jpg',
     nav: [
       { text: '首页', link: '/' },
-      { text: '进来坐坐', link: '/start/' }
+      { text: '进来坐坐', link: '/start/' },
+      { text: '共建', link: '/community/' },
     ],
 
     sidebar: {
+      // @ts-ignore
       '/': generateSidebar(path.resolve(__dirname, '..'), '', 0)
     },
 
