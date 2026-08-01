@@ -1,0 +1,4 @@
+//#region src/.vitepress/theme/styles/dynamic/pages/404.css?raw
+var _404_default = ".VPContent{\r\n    width: fit-content !important;\r\n    width: -webkit-fit-content !important;\r\n}\r\n\r\n.NotFound{\r\n    padding: 20px !important;\r\n    margin: 96px 32px 168px;\r\n}\r\n\r\n/*提示语*/\r\n.NotFound .code,.NotFound .title {\r\n    text-shadow: 0 0 10px rgba(0, 0, 0, 0.3);\r\n}\r\n\r\n.dark{\r\n    .NotFound .code,.NotFound .title {\r\n        text-shadow: 0 0 10px rgba(255, 255, 255, 0.6);\r\n    }\r\n}\r\n\r\n/*返回按钮*/\r\n.NotFound .action .link:hover {\r\n    transform: scale(1.05);\r\n    background-color: rgba(0, 0, 0, 0.08) !important;\r\n}\r\n\r\n.NotFound .action .link:active {\r\n    background-color: rgba(0, 0, 0, 0.2) !important;\r\n}";
+//#endregion
+export { _404_default as default };

@@ -46,13 +46,27 @@ html {
         padding: 0 64px;
     }
 }
-@media(max-width: 959px){
+
+@media(max-width: 960px){
     .wrapper:has(> .container){
         padding: 0 12px;
-        will-change: padding;
+        transition: none;
     }
     .VPNav{
         position: sticky !important;
+    }
+    .VPNavScreen{
+        /*noinspection CssUnresolvedCustomProperty*/
+        padding-top: calc(var(--vp-nav-height) + var(--vp-layout-top-height, 0px) + 20px) !important;
+    }
+    .container:has(> .title){
+        transition: none;
+    }
+}
+
+@media(max-width: 768px){
+    .container:has(> .title){
+        padding: 0 2px !important;
     }
 }
 
@@ -64,6 +78,11 @@ html {
     }
     .wrapper:has(> .container){
         padding:0;
+    }
+    @media(max-width: 768px){
+        .VPHero{
+            padding-top: calc(var(--vp-nav-height) + var(--vp-layout-top-height, 0px) + 68px) !important;
+        }
     }
 }
 

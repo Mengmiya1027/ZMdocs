@@ -1,14 +1,50 @@
-.title:has(> .VPImage):hover{
-    background-color: rgba(0, 0, 0, 0.08) !important;
-}
-
-.title:has(> .VPImage):active{
-    background-color: rgba(0, 0, 0, 0.2) !important;
-}
-
 /*不要分割线*/
 .divider:has(> .divider-line) {
     display: none;
+}
+
+@media(max-width: 960px){
+    .divider-line{
+        background-color: var(--vp-button-alt-bg) !important;
+        width: 90% !important;
+        margin:0 auto;
+    }
+
+    .VPNavBar{
+        position: relative; /* 触发层叠上下文，使 z-index 生效 */
+        z-index: 1;         /* 必须大于 .VPNavScreen 的 z-index（0） */
+    }
+
+    .VPNav{
+        position: relative;
+    }
+
+    .VPNavScreen{
+        position: absolute !important;
+        top: 0 !important;
+        width: 100%;
+        height: 100vh;
+        z-index: 0;
+    }
+
+    .VPLink.link.VPNavScreenMenuLink{
+        position: relative;
+        padding: 6px 6px 6px !important;
+        margin: 6px 0 5px;
+        border-radius: 12px !important;
+        border-bottom: none !important;
+    }
+
+    .VPLink.link.VPNavScreenMenuLink:active{
+        background-color: rgba(0, 0, 0, 0.2) !important;
+    }
+    .items:has(> .header){
+        width: fit-content !important;
+        margin-left: auto !important;
+    }
+    .outline {
+        padding: 8px 16px !important;
+    }
 }
 
 .title:has(> .VPImage){
@@ -17,7 +53,6 @@
     justify-content: center;
     padding:0 20px 0 10px;
     border-radius: 16px !important;
-    /*noinspection CssUnresolvedCustomProperty*/
     border: none;
 }
 
@@ -28,8 +63,58 @@
     border-radius: 12px !important;
 }
 
-.VPLink.link.VPNavBarMenuLink:hover{
-    background-color: rgba(0, 0, 0, 0.08) !important;
+@media(min-width: 960px){
+    .VPLink.link.VPNavBarMenuLink:hover{
+        background-color: rgba(0, 0, 0, 0.08) !important;
+    }
+    .title:has(> .VPImage):hover{
+        background-color: rgba(0, 0, 0, 0.08) !important;
+    }
+    .VPLocalNav.has-sidebar{
+        border-bottom: none !important;
+    }
+    .VPLocalNavOutlineDropdown button {
+        padding: 6px 16px !important;
+        margin: 6px 16px 5px !important;
+        border-radius: 16px;
+    }
+    .VPLocalNavOutlineDropdown button:hover, .top-link:hover{
+        background-color: rgba(0, 0, 0, 0.08) !important;
+    }
+}
+
+.VPDocOutlineItem.root{
+    max-width: 100%;
+}
+
+.VPDocAside{
+    flex-direction: row !important;
+    width: 100%;
+    align-items: center;
+    padding-bottom: var(--vp-nav-height);
+}
+
+.VPDocAsideOutline.has-outline{
+    height: fit-content !important;
+    max-width: 100%;
+}
+
+.content:has(> .VPDocOutlineItem.root){
+    padding : 0 16px 16px 16px !important;
+    border-radius: 16px;
+}
+
+.aside-curtain {
+    display: none;
+}
+
+.top-link{
+    padding:4px 16px !important;
+}
+
+
+.title:has(> .VPImage):active{
+    background-color: rgba(0, 0, 0, 0.2) !important;
 }
 
 .VPLink.link.VPNavBarMenuLink:active{
@@ -38,4 +123,13 @@
 
 .VPMenu {
     border: none !important;
+}
+
+@media(max-width: 768px){
+    .shell{
+        margin: 48px auto !important;
+        height: fit-content !important;
+        max-height: calc(100vh - 48px);
+        transition: margin 0.15s ease;
+    }
 }

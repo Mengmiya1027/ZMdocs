@@ -76,7 +76,7 @@
 }
 
 /* 页面元素 */
-.VPLink.link.pager-link, .edit-info{
+.VPLink.link.pager-link, .edit-info ,.VPDocAsideOutline.has-outline{
     background: var(--zm-background-medium) !important;
     backdrop-filter: var(--zm-backdrop-blur-medium);
     border: 1px solid rgba(255, 255, 255, 0.3);
@@ -96,4 +96,88 @@
 
 .VPLink.link.pager-link:active{
     background-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+.header,.outline,.top-link,.VPDocOutlineItem {
+    background: var(--zm-background-medium);
+    backdrop-filter: var(--zm-backdrop-blur-medium);
+}
+
+.header,.outline {
+    border: none !important;
+}
+
+.top-link ,.VPDocOutlineItem{
+    line-height: normal !important;
+    width: fit-content;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 16px;
+    font-weight: 600 !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+}
+
+.top-link{
+    margin: 7px auto 0 !important;
+}
+
+.VPDocOutlineItem{
+    margin: 0 auto;
+}
+
+/*文档液态玻璃*/
+.content-container:has(> .main) :is(p, h1, h2, h3, h4, h5, h6) {
+    background: var(--zm-background-medium); /* 半透明白底 */
+    backdrop-filter: var(--zm-backdrop-blur-medium); /* 模糊 + 色彩增强 */
+
+    border: 1px solid rgba(255, 255, 255, 0.6); /* 玻璃边缘光晕 */
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08); /* 一点悬浮阴影 */
+
+    /* 和相邻段落拉开距离 */
+    margin-bottom: 1.5rem;
+}
+
+.content-container:has(> .main) p {
+    padding: 0.5em;
+}
+
+.content-container:has(> .main) h1 {
+    text-align: center;
+}
+
+.content-container:has(> .main) :is(h1, h2, h3, h4, h5, h6) {
+    padding: 0.2em;
+}
+
+@media(max-width: 768px){
+    .container:has(> .VPNavScreenMenu){
+        background: var(--zm-background-medium) !important;
+        backdrop-filter: var(--zm-backdrop-blur-medium);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        padding: 12px 24px 12px;
+        margin-top: 24px !important;
+        border-radius: 16px !important;
+    }
+    .VPNavScreenAppearance.appearance{
+        background: var(--zm-background-medium) !important;
+        backdrop-filter: var(--zm-backdrop-blur-medium);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        border-radius: 16px !important;
+    }
+    .VPLink.link.VPNavScreenMenuLink{
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    }
+}
+
+@media(min-width: 961px){
+    .VPLocalNavOutlineDropdown{
+        background: var(--zm-background-medium) !important;
+        backdrop-filter: var(--zm-backdrop-blur-medium);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        border-radius: 0 0 16px;
+    }
 }
