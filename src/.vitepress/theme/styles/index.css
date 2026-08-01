@@ -10,4 +10,5 @@
 @import "./docs/sidebar.css";
 @import "./docs/document.css";
 @import "./docs/outline-scroll.css";
+@import "./docs/content-transition.css";
 @import "global/navbar.css";

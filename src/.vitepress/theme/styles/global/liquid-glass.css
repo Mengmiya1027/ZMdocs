@@ -137,6 +137,9 @@
     margin-bottom: 1.5rem;
 }
 
+/* 文档正文列：保持透明，不铺任何白底——淡显效果由内部玻璃卡片自身的 background-color
+   承担（见 contentTransition.ts），避免整列白底把整页背景洗成“淡淡白颜色”。 */
+
 .content-container:has(> .main) p {
     padding: 0.5em;
 }
