@@ -1,0 +1,186 @@
+/* 自定义字体：JetBrains Mono NL（无连字，等宽代码）+ HarmonyOS Sans SC（中文正文） */
+
+@font-face {
+  font-family: 'JetBrains Mono NL';
+  src: url('/fonts/mono/JetBrainsMonoNL-Thin.ttf') format('truetype');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono NL';
+  src: url('/fonts/mono/JetBrainsMonoNL-ThinItalic.ttf') format('truetype');
+  font-weight: 100;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono NL';
+  src: url('/fonts/mono/JetBrainsMonoNL-ExtraLight.ttf') format('truetype');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono NL';
+  src: url('/fonts/mono/JetBrainsMonoNL-ExtraLightItalic.ttf') format('truetype');
+  font-weight: 200;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono NL';
+  src: url('/fonts/mono/JetBrainsMonoNL-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono NL';
+  src: url('/fonts/mono/JetBrainsMonoNL-LightItalic.ttf') format('truetype');
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono NL';
+  src: url('/fonts/mono/JetBrainsMonoNL-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono NL';
+  src: url('/fonts/mono/JetBrainsMonoNL-Italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono NL';
+  src: url('/fonts/mono/JetBrainsMonoNL-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono NL';
+  src: url('/fonts/mono/JetBrainsMonoNL-MediumItalic.ttf') format('truetype');
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono NL';
+  src: url('/fonts/mono/JetBrainsMonoNL-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono NL';
+  src: url('/fonts/mono/JetBrainsMonoNL-SemiBoldItalic.ttf') format('truetype');
+  font-weight: 600;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono NL';
+  src: url('/fonts/mono/JetBrainsMonoNL-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono NL';
+  src: url('/fonts/mono/JetBrainsMonoNL-BoldItalic.ttf') format('truetype');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono NL';
+  src: url('/fonts/mono/JetBrainsMonoNL-ExtraBold.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono NL';
+  src: url('/fonts/mono/JetBrainsMonoNL-ExtraBoldItalic.ttf') format('truetype');
+  font-weight: 800;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* HarmonyOS Sans SC（中文正文，华为授权禁止修改字体，故直接用原始 .ttf 嵌入）
+   字重：Thin=250 / Light=300 / Regular=400 / Medium=500 / Bold=700 / Black=900 */
+@font-face {
+  font-family: 'HarmonyOS Sans SC';
+  src: url('/fonts/zh/harmony-sc/harmony-sc-Thin.ttf') format('truetype');
+  font-weight: 250;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'HarmonyOS Sans SC';
+  src: url('/fonts/zh/harmony-sc/harmony-sc-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'HarmonyOS Sans SC';
+  src: url('/fonts/zh/harmony-sc/harmony-sc-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'HarmonyOS Sans SC';
+  src: url('/fonts/zh/harmony-sc/harmony-sc-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'HarmonyOS Sans SC';
+  src: url('/fonts/zh/harmony-sc/harmony-sc-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'HarmonyOS Sans SC';
+  src: url('/fonts/zh/harmony-sc/harmony-sc-Black.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* 代码/等宽：JetBrains Mono NL（无编程连字，字符原样显示） */
+  --vp-font-family-mono: 'JetBrains Mono NL', ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+  /* 正文/UI：HarmonyOS Sans SC（中文 + 拉丁/符号，单一家族通吃）+ 系统中文回退 */
+  --vp-font-family-base: 'HarmonyOS Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Source Han Sans SC', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}

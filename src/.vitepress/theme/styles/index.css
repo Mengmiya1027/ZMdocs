@@ -12,3 +12,5 @@
 @import "./docs/outline-scroll.css";
 @import "./docs/content-transition.css";
 @import "global/navbar.css";
+/* 自定义字体（JetBrains Mono NL + 微软雅黑）放在最后导入，确保 --vp-font-family-* 覆盖生效 */
+@import "./global/fonts.css";
