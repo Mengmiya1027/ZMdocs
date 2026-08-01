@@ -185,3 +185,10 @@
         padding-left: 32px !important;   /* 与侧边栏导航项左缘对齐（x=32），960–1439px 也统一 */
     }
 }
+
+@media(max-width: 960px) {
+    .VPSidebar{
+        border-radius: 0;
+        background: var(--zm-background-medium) !important;
+    }
+}

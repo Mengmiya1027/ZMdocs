@@ -1,0 +1,47 @@
+/* ============================================================
+   窄屏（≤1279.98px）右侧大纲：抽屉式收起
+   - 默认隐藏顶部"本页大纲"下拉（避免跑到左上角）
+   - 右侧大纲收成右缘细条
+   - 鼠标靠近（悬停）时向左推出展开完整大纲
+     （含 VitePress 原生进度条 .outline-marker，不做替换）
+   - 鼠标离开后 1 秒自隐藏（收回为细条）
+   ============================================================ */
+
+@media (max-width: 1279.98px) {
+
+    /* 1. 隐藏顶部"本页大纲"下拉，避免跳到左上角 */
+    .VPLocalNavOutlineDropdown,
+    .VPLocalNav .VPLocalNavOutlineDropdown {
+        display: none !important;
+    }
+
+    /* 2. 右侧大纲改为右缘抽屉 */
+    .VPDoc .aside {
+        display: block !important;
+        position: fixed !important;
+        top: 0 !important;
+        right: 0 !important;
+        width: 224px !important;
+        height: 100vh !important;
+        z-index: 60;
+        /* 收起：只露右侧 10px 细条 */
+        clip-path: inset(0 0 0 214px);
+        transition: clip-path 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        transition-delay: 1s; /* 鼠标离开后 1s 收起 */
+    }
+
+    /* 悬停 / 键盘聚焦：向左推出，展开完整大纲 */
+    .VPDoc .aside:hover,
+    .VPDoc .aside:focus-within {
+        clip-path: inset(0 0 0 0);
+        transition-delay: 0s;
+    }
+
+    .VPDoc .aside .aside-container {
+        position: absolute !important;
+        top: var(--vp-nav-height) !important;
+        right: 0 !important;
+        width: 224px !important;
+        height: calc(100vh - var(--vp-nav-height)) !important;
+    }
+}
