@@ -124,17 +124,35 @@
     margin: 0 auto;
 }
 
-/*文档液态玻璃*/
+/*文档液态玻璃 —— 双层结构：
+   玻璃视觉（背景 + 模糊）放在 ::before 上，opacity 永远为 1，只动模糊半径（结霜），
+   因此即使文字层做淡入也不会让玻璃变白（见 contentTransition.ts 的方案说明）。
+   元素本体透明，仅作定位容器 + 文字/边框的承载层。 */
 .content-container:has(> .main) :is(p, h1, h2, h3, h4, h5, h6) {
-    background: var(--zm-background-medium); /* 半透明白底 */
-    backdrop-filter: var(--zm-backdrop-blur-medium); /* 模糊 + 色彩增强 */
+    position: relative;        /* 定位上下文，承载 ::before */
+    z-index: 0;                 /* 建立层叠上下文，把 ::before 的 z-index:-1 收在卡片内部 */
+    background: transparent;    /* 白底移到 ::before，本体透明 */
 
-    border: 1px solid rgba(255, 255, 255, 0.6); /* 玻璃边缘光晕 */
+    border: 1px solid rgba(255, 255, 255, 0.6); /* 玻璃边缘光晕（最上层，盖住 ::before） */
     border-radius: 16px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08); /* 一点悬浮阴影 */
 
     /* 和相邻段落拉开距离 */
     margin-bottom: 1.5rem;
+}
+
+/* 玻璃层：背景半透明 + 背景模糊，铺满卡片。opacity 恒为 1，永远不参与任何淡入淡出，
+   因此不会被祖先的 opacity 动画隔离 → 不会变白。模糊半径由 contentTransition.ts 做
+   blur(0px)→静止值 的“结霜”渐入。 */
+.content-container:has(> .main) :is(p, h1, h2, h3, h4, h5, h6)::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;                                       /* 落在文字下方 */
+    background: var(--zm-background-medium);           /* 半透明白底 */
+    backdrop-filter: var(--zm-backdrop-blur-medium);   /* 模糊 + 色彩增强 */
+    -webkit-backdrop-filter: var(--zm-backdrop-blur-medium);
+    border-radius: inherit;                            /* 跟随卡片圆角 */
 }
 
 /* 文档正文列：保持透明，不铺任何白底——淡显效果由内部玻璃卡片自身的 background-color

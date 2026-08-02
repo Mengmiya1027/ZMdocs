@@ -103,6 +103,47 @@ export default {
                 () => router.route.path,
                 (to) => afterRoute(to)
             ))
+
+            // 同页导航（点左侧栏/顶栏中指向「当前页」的同一选项，如再次点击「开始」）：
+            // VitePress 不会触发路由变化，默认只是瞬间回顶、无动画。这里在【捕获阶段】拦截，
+            // 阻止默认瞬跳，改为【平滑滚动到顶 + 重播换页动画】，让“再次点击同一选项”也有
+            // 与首次进入一致的动画观感。
+            // 仅作用于侧栏/顶栏链接（.VPSidebar / .VPNav / .VPNavScreen），不拦截文档正文与
+            // 大纲链接（后者由 outlineScroll 处理），避免误伤。
+            // 捕获阶段 + stopPropagation：确保 VitePress 自身的同名链接点击处理（瞬跳回顶）被
+            // 抢先拦截，避免“瞬时回顶”和我们的平滑滚动打架。
+            const onSamePageNavClick = (e: MouseEvent) => {
+                const link = (e.target as HTMLElement | null)?.closest<HTMLAnchorElement>(
+                    '.VPSidebar a, .VPNav a, .VPNavScreen a'
+                )
+                if (!link) return
+                const href = link.getAttribute('href')
+                if (!href || /^(https?:)?\/\//i.test(href) || href.startsWith('#')) return
+                let linkPath: string
+                try {
+                    linkPath = normalizePath(new URL(href, location.href).pathname)
+                } catch {
+                    return
+                }
+                const curPath = normalizePath(router.route.path)
+                if (linkPath !== curPath) return // 跨页：交给 onAfterRouteChange 播动画，这里不拦
+
+                // 同页点击：阻止默认瞬跳 + 阻止 VitePress 同名处理，改为平滑滚动 + 重播动画
+                e.preventDefault()
+                e.stopPropagation()
+                if (link.hash) {
+                    const anchor = document.getElementById(decodeURIComponent(link.hash.slice(1)))
+                    if (anchor) {
+                        anchor.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                    } else {
+                        window.scrollTo({ top: 0, behavior: 'smooth' })
+                    }
+                } else {
+                    window.scrollTo({ top: 0, behavior: 'smooth' })
+                }
+                playDocSwitchAnimation()
+            }
+            document.addEventListener('click', onSamePageNavClick, true)
         }
     }
 }

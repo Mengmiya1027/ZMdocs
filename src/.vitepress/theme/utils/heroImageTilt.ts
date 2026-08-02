@@ -1,5 +1,5 @@
 /**
- * Hero 图片倾斜动效（自动等待元素出现 + 图片加载完成）
+ * Hero 图片倾斜动效
  * 返回 Promise<() => void>，销毁函数在初始化完成后 resolve
  */
 export function useHeroImageTilt(): Promise<() => void> {
@@ -89,12 +89,12 @@ export function useHeroImageTilt(): Promise<() => void> {
             }, 10000);
         }
 
-        // ========== 核心修复在这里 ==========
+        // ========== 修复 ==========
         function initEffect(
             imgEl: HTMLImageElement,
             onReady: (destroy: () => void) => void
         ) {
-            // ✅ 保存「原始内联样式」，不是计算样式！
+            // 保存「原始内联样式」，不是计算样式！
             const originalTransform = imgEl.style.transform;
             const originalBoxShadow = imgEl.style.boxShadow;
             const originalWillChange = imgEl.style.willChange;
@@ -211,7 +211,7 @@ export function useHeroImageTilt(): Promise<() => void> {
                 if (rafId) cancelAnimationFrame(rafId);
 
                 if (imgEl.isConnected) {
-                    // ✅ 关键修复：恢复原始内联样式，而不是恢复 baseTransform
+                    //  关键修复：恢复原始内联样式，而不是恢复 baseTransform
                     // 这样当 CSS media query 变化时，不会用旧的桌面端计算值覆盖新规则
                     imgEl.style.transform = originalTransform;
                     imgEl.style.boxShadow = originalBoxShadow;

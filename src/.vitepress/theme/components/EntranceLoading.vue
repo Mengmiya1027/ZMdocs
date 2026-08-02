@@ -64,7 +64,7 @@ onMounted(() => {
   overflow: hidden;
   background: var(--vp-c-bg, #1b1b1f);
 
-  // 入场光晕：中心白光从内向外扩散再淡出，营造"点亮"感
+  // 入场光晕：中心白光从内向外扩散再淡出
   &::before {
     content: "";
     position: absolute;
@@ -75,9 +75,7 @@ onMounted(() => {
     animation: flash-in 0.85s ease both;
   }
 
-  // 加载完成：有冲击力的退场——
-  // logo 向前冲刺放大 + 高光闪一下 + 模糊消散，
-  // 圆环向外炸开旋转并模糊，文字上抛淡出，最后整屏收掉。
+  // 加载完成：退场——
   &.loaded {
     pointer-events: none;
     // 整屏背景稍后淡出，让 logo 的冲刺先被看到
@@ -114,7 +112,7 @@ onMounted(() => {
       position: relative;
       width: 150px;
       height: 150px;
-      // 入场：整组从中心弹入（带回弹），与退场炸开形成"聚—散"对比
+      // 入场：整组从中心弹入（带回弹）
       animation: ring-in 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 
       .loader-circle {
@@ -205,7 +203,7 @@ onMounted(() => {
   }
 }
 
-// 入场：圆环整组从中心弹入（内向汇聚，与退场炸开呼应）
+// 入场：圆环整组从中心弹入
 @keyframes ring-in {
   0% {
     transform: scale(0.55) rotate(-30deg);
