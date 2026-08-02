@@ -294,6 +294,8 @@ onMounted(() => {
 
 <!-- 全局（非 scoped）：loader 退场时主界面从屏幕外推入进场。
      各区块从各自屏幕边缘外推出：主内容从下、顶栏从上、侧栏从左、右侧大纲从右、页脚从下。
+     注意：左栏 .VPSidebar 仅在 ≥960px 才播入场（窄屏它本就被隐藏，不能弹出来）；
+     其余区块不受断点限制。
      关键：主内容 .VPContent 不能用 transform / opacity<1 推出——
      · transform 会让它身上的 "fixed 背景" 被拉进 transform 一起滑动（即"背景图也在推出"的副作用）；
      · opacity<1 或 transform 还会让 .VPContent 成为 backdrop root，内部玻璃卡片的
@@ -308,8 +310,14 @@ html.entrance-done .VPContent {
 html.entrance-done .VPNav {
   animation: entrance-nav-in 0.82s cubic-bezier(0.22, 1, 0.36, 1) 0.22s both;
 }
-html.entrance-done .VPSidebar {
-  animation: entrance-sidebar-in 0.82s cubic-bezier(0.22, 1, 0.36, 1) 0.22s both;
+/* 首页顶栏：不再单独隐藏玻璃容器。.VPNav 用 top 推出（非 transform），
+   不会创建 backdrop root，内部玻璃 ::before 全程采样真实页面背景，故无需隐藏。
+   让 .VPNavBar.home .container 直接随 .VPNav 一起从顶部推出，避免"直接出现"而非"推出"。 */
+/* 左栏仅在 ≥960px（主题里侧栏转移动态的断点）才入场滑入；窄屏本就隐藏，不再弹出。 */
+@media (min-width: 960px) {
+  html.entrance-done .VPSidebar {
+    animation: entrance-sidebar-in 0.82s cubic-bezier(0.22, 1, 0.36, 1) 0.22s both;
+  }
 }
 html.entrance-done .VPDocAsideOutline {
   animation: entrance-aside-in 0.82s cubic-bezier(0.22, 1, 0.36, 1) 0.22s both;
@@ -328,12 +336,10 @@ html.entrance-done .VPFooter {
 }
 @keyframes entrance-nav-in {
   0% {
-    opacity: 0;
-    transform: translateY(-100%);
+    top: -100%;
   }
   100% {
-    opacity: 1;
-    transform: translateY(0);
+    top: 0;
   }
 }
 @keyframes entrance-sidebar-in {

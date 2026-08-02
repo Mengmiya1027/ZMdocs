@@ -133,3 +133,37 @@
         transition: margin 0.15s ease;
     }
 }
+
+/* 一镜到底：玻璃层常驻 .container 的 ::before 上，opacity 恒为 1，永不淡出。
+   首页居中胶囊与文档页靠顶长条共用同一份玻璃，home→start 切页时只 morph 顶栏几何外形
+   （margin / 圆角 / 宽度），玻璃始终在场、跟着一起变形 —— 没有 opacity 淡出断点。 */
+.VPNavBar .container:has(> .title){
+    position: relative;
+    isolation: isolate;
+    border-radius: 16px;
+    transition: margin 0.3s ease, border-radius 0.3s ease, min-width 0.3s ease;
+}
+.VPNavBar .container:has(> .title)::before{
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background: var(--zm-background-medium);
+    backdrop-filter: var(--zm-backdrop-blur-medium);
+    -webkit-backdrop-filter: var(--zm-backdrop-blur-medium-webkit);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    opacity: 1;
+    pointer-events: none;
+    transition: left 0.3s ease, border-radius 0.3s ease;
+}
+/* 文档页（非首页）顶栏：玻璃常驻为靠顶全宽条，几何与首页靠顶态完全一致，
+   故切页时与首页胶囊平滑 morph，无淡出断点。 */
+.VPNavBar:not(.home) .container:has(> .title){
+    margin: 0 !important;
+    min-width: 100% !important;
+    max-width: none !important;
+    border-radius: 0 0 16px 16px;
+    transition: margin 0.3s ease, border-radius 0.3s ease, min-width 0.3s ease;
+}

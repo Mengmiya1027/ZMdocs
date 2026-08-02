@@ -10,17 +10,30 @@
     padding-right: 0 !important;
 }
 
+/* 玻璃层由全局 navbar.css 的 .container::before 统一提供（一镜到底），
+   这里不再给 .content-body 单独加玻璃，避免与整栏玻璃叠加形成“双层玻璃”发白。 */
 .content-body {
-    background: var(--zm-background-medium) !important;
-    backdrop-filter: var(--zm-backdrop-blur-medium);
-    -webkit-backdrop-filter: var(--zm-backdrop-blur-medium-webkit);
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
-    border-left: none !important;
-    box-shadow: 10px 8px 40px -10px rgba(0, 0, 0, 0.5) !important; /* 右侧偏移 + 负扩展隐藏左侧阴影 */
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border: none !important;
+    box-shadow: none !important;
     padding-right: 32px !important;
     max-width: 100% !important;
     z-index: 1;
     border-radius: 0 0 16px 0;
+}
+
+/* 与参考项目一致的 L 形融合：文档页有侧栏时，顶栏玻璃只覆盖侧栏右侧，
+   左侧 272px 透出固定在顶栏背后的 .VPSidebar 玻璃（position:fixed;top:0），
+   从而避免“顶栏玻璃+侧栏玻璃”双层、以及 y=48 处横缝。
+   仅桌面端（有固定侧栏）生效；移动端侧栏非固定，沿用上面的全宽玻璃。 */
+@media (min-width: 960px) {
+    .VPNavBar.has-sidebar .container:has(> .title)::before{
+        left: var(--vp-sidebar-width, 272px);
+        border-left: none;
+        border-radius: 0 0 16px 0;
+    }
 }
 
 .VPNavBarTitle.has-sidebar{

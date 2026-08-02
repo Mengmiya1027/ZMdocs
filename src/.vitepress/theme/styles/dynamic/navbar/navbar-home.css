@@ -17,17 +17,17 @@ html {
     background: none !important;
 }
 
-.container:has(> .title){
-    background: var(--zm-background-medium) !important;
-    backdrop-filter: var(--zm-backdrop-blur-medium);
-    -webkit-backdrop-filter: var(--zm-backdrop-blur-medium-webkit);
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
-    border-radius: 16px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    padding:0 20px 0 10px !important;
-    margin-top: 20px !important;
-    transition: margin 0.15s ease, border-radius 0.15s ease;
+/* 首页专属布局（玻璃层常驻 global/navbar.css 的 ::before，opacity 恒 1）。
+   home→start 一镜到底：切页时玻璃不淡出，只 morph 几何（首页居中胶囊 ↔ 文档靠顶长条）。
+   默认态（首页在顶部、可滚动）：悬浮磨砂胶囊（留 20px 上边距 + 全圆角）；
+   上滑滚动离开顶部（scrollable: top 为真）或页面不可滚动（scrollable: none）时，
+   回到贴顶全宽条（无上边距、仅下角圆角）——即"上滑靠顶"，与文档页几何一致。 */
+.VPNavBar.home .container:has(> .title){
+    padding: 0 20px 0 10px !important;
     max-width: none;
+    margin-top: 20px !important;
+    border-radius: 16px;
+    transition: margin 0.3s ease, border-radius 0.3s ease, min-width 0.3s ease;
 }
 
 .content-body:has(> .VPNavBarSearch.search){
@@ -70,14 +70,16 @@ html {
     }
 }
 
+/* 上滑滚动离开顶部（scrollable: top 为真）：顶栏贴顶全宽条（无上边距、仅下角圆角）。
+   对齐参考项目 ZMdocs-main 的实现；玻璃层由全局 navbar.css 的 ::before 提供（保留 home→start 磨砂淡出）。 */
 @container scroll-state(scrollable: top) {
-    .container:has(> .title){
+    .VPNavBar.home .container:has(> .title){
         margin: 0 !important;
-        min-width:100% !important;
+        min-width: 100% !important;
         border-radius: 0 0 16px 16px;
     }
     .wrapper:has(> .container){
-        padding:0;
+        padding: 0;
     }
     @media(max-width: 768px){
         .VPHero{

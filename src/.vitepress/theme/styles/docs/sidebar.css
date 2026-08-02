@@ -21,6 +21,18 @@
     border-radius: 0 0 16px 0;
     z-index: 1;
 }
+
+/* 文档页 L 形玻璃：桌面端让侧栏玻璃与顶栏 ::before 玻璃同材质，
+   并移除上边框，避免顶栏下边框与侧栏上边框在接缝处叠加成 seam。
+   首页无 .VPSidebar，故不受此规则影响。 */
+@media (min-width: 960px) {
+    .VPSidebar{
+        background: var(--zm-background-medium) !important;
+        backdrop-filter: var(--zm-backdrop-blur-medium);
+        -webkit-backdrop-filter: var(--zm-backdrop-blur-medium-webkit);
+        border-top: none;
+    }
+}
 /* Chrome、Edge、Safari */
 .VPSidebar::-webkit-scrollbar {
     display: none; /* 直接隐藏滚动条，不占位 */
