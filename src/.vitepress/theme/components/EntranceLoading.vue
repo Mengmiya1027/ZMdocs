@@ -32,6 +32,11 @@ const dismiss = () => {
   if (finished) return
   finished = true
   loaded.value = true
+  // 退场时给 <html> 打标记，触发主界面联动进场（与 loader 退场同步浮现）；
+  // 动画播完后移除，避免客户端路由切换重建 DOM 时重播。
+  document.documentElement.classList.add('entrance-done')
+  // 1.3s 后主界面推出完成，再移除 class，避免客户端路由切换重建 DOM 时重播。
+  setTimeout(() => document.documentElement.classList.remove('entrance-done'), 1300)
 }
 
 onMounted(() => {
@@ -63,17 +68,6 @@ onMounted(() => {
   z-index: 9999;
   overflow: hidden;
   background: var(--vp-c-bg, #1b1b1f);
-
-  // 入场光晕：中心白光从内向外扩散再淡出
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at center, rgba(255, 255, 255, 0.18), transparent 62%);
-    opacity: 0;
-    pointer-events: none;
-    animation: flash-in 0.85s ease both;
-  }
 
   // 加载完成：退场——
   &.loaded {
@@ -253,21 +247,6 @@ onMounted(() => {
   }
 }
 
-// 入场：中心光晕从内扩散后淡出
-@keyframes flash-in {
-  0% {
-    opacity: 0;
-    transform: scale(0.6);
-  }
-  40% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    transform: scale(1.4);
-  }
-}
-
 // 退场：logo 向前冲刺放大 + 高光闪烁 + 模糊消散
 @keyframes logo-zoom {
   0% {
@@ -309,6 +288,82 @@ onMounted(() => {
   100% {
     transform: translateY(-14px);
     opacity: 0;
+  }
+}
+</style>
+
+<!-- 全局（非 scoped）：loader 退场时主界面从屏幕外推入进场。
+     各区块从各自屏幕边缘外推出：主内容从下、顶栏从上、侧栏从左、右侧大纲从右、页脚从下。
+     关键：主内容 .VPContent 不能用 transform / opacity<1 推出——
+     · transform 会让它身上的 "fixed 背景" 被拉进 transform 一起滑动（即"背景图也在推出"的副作用）；
+     · opacity<1 或 transform 还会让 .VPContent 成为 backdrop root，内部玻璃卡片的
+       backdrop-filter 采不到 .Layout 上的真实页面背景 → 高斯模糊失效。
+     故 .VPContent 改用 relative 定位 + top 推出（top 既不创建 backdrop root、也不影响 fixed 背景），
+     opacity 恒为 1：玻璃卡片因此直接采样 .Layout 那份静态页面背景，推出期间高斯模糊全程生效、背景也不滑动。 -->
+<style>
+html.entrance-done .VPContent {
+  position: relative;
+  animation: entrance-doc-rise 0.82s cubic-bezier(0.22, 1, 0.36, 1) 0.22s both;
+}
+html.entrance-done .VPNav {
+  animation: entrance-nav-in 0.82s cubic-bezier(0.22, 1, 0.36, 1) 0.22s both;
+}
+html.entrance-done .VPSidebar {
+  animation: entrance-sidebar-in 0.82s cubic-bezier(0.22, 1, 0.36, 1) 0.22s both;
+}
+html.entrance-done .VPDocAsideOutline {
+  animation: entrance-aside-in 0.82s cubic-bezier(0.22, 1, 0.36, 1) 0.22s both;
+}
+html.entrance-done .VPFooter {
+  animation: entrance-footer-in 0.82s cubic-bezier(0.22, 1, 0.36, 1) 0.22s both;
+}
+
+@keyframes entrance-doc-rise {
+  0% {
+    top: 100vh;
+  }
+  100% {
+    top: 0;
+  }
+}
+@keyframes entrance-nav-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes entrance-sidebar-in {
+  0% {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@keyframes entrance-footer-in {
+  0% {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes entrance-aside-in {
+  0% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
   }
 }
 </style>

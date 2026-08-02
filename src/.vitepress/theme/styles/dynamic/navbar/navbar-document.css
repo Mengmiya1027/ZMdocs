@@ -85,8 +85,8 @@
     }
 
     .VPNavBar.has-sidebar.screen-open{
-        position: relative; /* 触发层叠上下文，使 z-index 生效 */
-        z-index: 1;         /* 必须大于 .VPNavScreen 的 z-index（0） */
+        position: relative; 
+        z-index: 1;         
     }
 
     .content-body {

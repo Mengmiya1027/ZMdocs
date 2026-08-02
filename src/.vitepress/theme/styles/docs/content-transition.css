@@ -1,10 +1,9 @@
 /* ============================================================
-   文档内容列（.VPDoc .content）在每次路由切换时的“联想设置”式
-   淡入/滑动动画，现由 JS（Web Animations API）在
+   文档内容列（.VPDoc .content）在每次路由切换时的淡入/滑动动画，
+   现由 JS（Web Animations API）在
    ../utils/contentTransition.ts 的 replayDocAnim() 中直接播放，
    不再依赖此处 CSS class，以避免 fill-mode / HMR / 层叠等导致的
-   “动画不显示”问题。
-
+   动画不显示问题
    本文件保留仅为兼容 styles/index.css 的 @import 链 —— 无实际样式规则。
    如需改动画参数（位移/时长/曲线），改 contentTransition.ts 的
    el.animate(...) 即可。
