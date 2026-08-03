@@ -1,9 +1,9 @@
 html:not(.dark) .Layout,html:not(.dark) .VPNavScreen,html:not(.dark) .items:has(> .header) {
-    background: url('/images/basic/bg-2.png') no-repeat center center fixed;
+    background: url('/images/ui/bg-3.jpg') no-repeat center center fixed;
     background-size: cover;
 }
 
 html.dark .Layout,html.dark .VPNavScreen, .items:has(> .header) {
-    background: url('/images/basic/bg-2-dark.png') no-repeat center center fixed;
+    background: url('/images/ui/bg-3-dark.jpg') no-repeat center center fixed;
     background-size: cover;
 }

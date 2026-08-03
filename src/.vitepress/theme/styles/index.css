@@ -9,4 +9,5 @@
 @import "./global/search.css";
 @import "./docs/sidebar.css";
 @import "./docs/document.css";
+@import "./docs/outline-scroll.css";
 @import "global/navbar.css";

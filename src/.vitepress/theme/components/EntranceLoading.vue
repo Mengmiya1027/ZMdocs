@@ -263,7 +263,6 @@ onMounted(() => {
   }
 }
 
-// 三点波浪弹跳
 @keyframes dot-bounce {
   0%,
   80%,
