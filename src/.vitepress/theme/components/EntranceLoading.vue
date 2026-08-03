@@ -1,11 +1,7 @@
 <template>
   <div id="loader-wrapper" :class="{ loaded }">
-    <!-- 背景动态光晕层（纯 CSS 实现） -->
-    <div class="bg-glow"></div>
-
     <div class="loader">
       <div class="loader-ring">
-        <!-- 单环渐变流光（通过 mask 裁切出圆环） -->
         <div class="loader-circle" />
         <img class="loader-logo" src="/images/basic/zm2.png" alt="" />
       </div>
@@ -13,12 +9,7 @@
         <span class="name">
           {{ siteName }}
         </span>
-        <span class="tip">
-          加载中
-          <span class="dots">
-            <span>.</span><span>.</span><span>.</span>
-          </span>
-        </span>
+        <span class="tip"> 加载中 </span>
       </div>
     </div>
   </div>
@@ -33,7 +24,7 @@ const { site } = useData()
 // 站点名：优先取 VitePress 站点标题，兜底 ZMdocs
 const siteName = site.value?.title || 'ZMdocs'
 
-// 加载完成状态
+// 加载完成状态（替代 home-dev 的 Pinia store.imgLoadStatus）
 const loaded = ref(false)
 let finished = false
 
@@ -41,14 +32,19 @@ const dismiss = () => {
   if (finished) return
   finished = true
   loaded.value = true
+  // 退场时给 <html> 打标记，触发主界面联动进场（与 loader 退场同步浮现）；
+  // 动画播完后移除，避免客户端路由切换重建 DOM 时重播。
+  document.documentElement.classList.add('entrance-done')
+  // 1.3s 后主界面推出完成，再移除 class，避免客户端路由切换重建 DOM 时重播。
+  setTimeout(() => document.documentElement.classList.remove('entrance-done'), 1300)
 }
 
 onMounted(() => {
-  // 入场动画：等首屏资源加载完成再收起，
-  // 并保留一个最短展示时长，让旋转动画被看到；
-  // 用兜底计时防止 load 事件迟迟不触发导致幕布卡死。
-  const minShow = 1500 // ms，最短展示时长
-  const hardCap = 3000 // ms，最长兜底
+  // 入场动画在组件挂载时立即播放一次；
+  // 退场在首屏资源加载完成后触发，并保留一个最短展示时长，
+  // 让旋转 / 入场动画被看到；用兜底计时防止 load 迟迟不触发导致卡死。
+  const minShow = 900 // ms，最短展示时长
+  const hardCap = 2600 // ms，最长兜底
 
   const onReady = () => setTimeout(dismiss, minShow)
 
@@ -71,47 +67,23 @@ onMounted(() => {
   height: 100%;
   z-index: 9999;
   overflow: hidden;
-  // 【美化1】暗色渐变 + 微动态底色
-  background: radial-gradient(circle at 50% 40%, #23232b, #0e0e12 80%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background: var(--vp-c-bg, #1b1b1f);
 
-  // 背景光晕（在底层缓慢呼吸）
-  .bg-glow {
-    position: absolute;
-    top: -20%;
-    left: -20%;
-    width: 140%;
-    height: 140%;
-    background: radial-gradient(circle at 30% 30%, rgba(66, 184, 131, 0.08), transparent 50%);
-    animation: bg-shift 8s ease-in-out infinite alternate;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  // 加载完成：退场过渡
+  // 加载完成：退场——
   &.loaded {
     pointer-events: none;
+    // 整屏背景稍后淡出，让 logo 的冲刺先被看到
     opacity: 0;
     visibility: hidden;
     transition:
-        opacity 0.45s ease 0.25s,
-        visibility 0.45s ease 0.25s;
-
-    // 退场时，背景光晕迅速收缩消失
-    .bg-glow {
-      animation: none;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
+        opacity 0.45s ease 0.22s,
+        visibility 0.45s ease 0.22s;
 
     .loader-ring {
       animation: ring-burst 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
     }
     .loader-logo {
-      // 覆盖掉呼吸动画，执行冲刺退场
-      animation: logo-zoom 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
+      animation: logo-zoom 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
     }
     .loader-text {
       animation: text-pop 0.42s ease forwards;
@@ -119,53 +91,60 @@ onMounted(() => {
   }
 
   .loader {
-    position: relative;
-    z-index: 1;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
 
+    // 圆环 + 中心 logo 的容器，保证两者居中对齐
     .loader-ring {
       position: relative;
       width: 150px;
       height: 150px;
+      // 入场：整组从中心弹入（带回弹）
+      animation: ring-in 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 
-      // 【美化2】单环渐变流光（取代原来的三层边框）
       .loader-circle {
         position: absolute;
         inset: 0;
         border-radius: 50%;
-        // 核心：锥形渐变制造流光，配合 mask 切出圆环
-        background: conic-gradient(
-            from 0deg,
-            transparent 0%,
-            var(--vp-c-brand, #42b883) 25%,
-            rgba(66, 184, 131, 0.1) 60%,
-            transparent 80%,
-            transparent 100%
-        );
-        // mask 裁切：中间挖空（48%~49% 是硬边），外部留边（到 79%）
-        mask: radial-gradient(
-            circle,
-            transparent 45%,
-            #000 47%,
-            #000 78%,
-            transparent 80%
-        );
-        -webkit-mask: radial-gradient(
-            circle,
-            transparent 45%,
-            #000 47%,
-            #000 78%,
-            transparent 80%
-        );
+        border: 3px solid transparent;
+        border-top-color: var(--vp-c-text-1, #fff);
         animation: spin 1.8s linear infinite;
-        // 加一点发光柔化，提升质感
-        filter: drop-shadow(0 0 8px rgba(66, 184, 131, 0.3));
+
+        &:before {
+          content: "";
+          position: absolute;
+          top: 5px;
+          left: 5px;
+          right: 5px;
+          bottom: 5px;
+          border-radius: 50%;
+          border: 3px solid transparent;
+          border-top-color: var(--vp-c-text-2, #a4a4a4);
+          animation: spin-reverse 0.6s linear infinite;
+        }
+
+        &:after {
+          content: "";
+          position: absolute;
+          top: 15px;
+          left: 15px;
+          right: 15px;
+          bottom: 15px;
+          border-radius: 50%;
+          border: 3px solid transparent;
+          border-top-color: var(--vp-c-text-3, #d3d3d3);
+          animation: spin 1s linear infinite;
+        }
       }
 
-      // 【美化3】中心 Logo：脉动呼吸 + 光晕
+      // 中心 logo：从 home-dev 的纯文字标题改为 zm2.png 图片
       .loader-logo {
         position: absolute;
         top: 50%;
@@ -176,11 +155,8 @@ onMounted(() => {
         border-radius: 50%;
         object-fit: cover;
         z-index: 3;
-        // 基础状态：呼吸动画
-        animation: logo-breathe 2.4s ease-in-out infinite;
-        box-shadow: 0 0 30px rgba(66, 184, 131, 0.15);
-        // 保证 logo 图片边缘清晰
-        background-color: #141417;
+        // 入场：logo 从小放大 + 高光闪入
+        animation: logo-in 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both;
       }
     }
 
@@ -192,45 +168,17 @@ onMounted(() => {
       z-index: 2;
       margin-top: 40px;
       font-size: 24px;
-      font-weight: 400;
-      letter-spacing: 1px;
-
+      // 入场：文字上移淡入（稍延迟，等环和 logo 落定）
+      animation: text-in 0.6s ease 0.15s both;
       .tip {
-        margin-top: 10px;
-        font-size: 16px;
-        opacity: 0.5;
-        font-weight: 300;
-        display: flex;
-        align-items: center;
-        gap: 4px;
-
-        // 【美化4】三点波浪弹跳
-        .dots {
-          display: inline-flex;
-          gap: 4px;
-          margin-left: 2px;
-
-          span {
-            display: inline-block;
-            font-size: 20px;
-            line-height: 1;
-            animation: dot-bounce 1.4s ease-in-out infinite;
-            &:nth-child(2) {
-              animation-delay: 0.2s;
-            }
-            &:nth-child(3) {
-              animation-delay: 0.4s;
-            }
-          }
-        }
+        margin-top: 6px;
+        font-size: 18px;
+        opacity: 0.6;
       }
     }
   }
 }
 
-// --- 基础动画 Keyframes ---
-
-// 圆环旋转
 @keyframes spin {
   0% {
     transform: rotate(0deg);
@@ -240,60 +188,80 @@ onMounted(() => {
   }
 }
 
- //背景光晕缓慢漂移
-@keyframes bg-shift {
+@keyframes spin-reverse {
   0% {
-    transform: scale(1) translate(0, 0);
+    transform: rotate(0deg);
   }
   100% {
-    transform: scale(1.1) translate(5%, 5%);
+    transform: rotate(-360deg);
   }
 }
 
-// Logo 脉动呼吸
-@keyframes logo-breathe {
-  0%,
+// 入场：圆环整组从中心弹入
+@keyframes ring-in {
+  0% {
+    transform: scale(0.55) rotate(-30deg);
+    opacity: 0;
+    filter: blur(6px);
+  }
+  60% {
+    transform: scale(1.06) rotate(8deg);
+    opacity: 1;
+    filter: blur(0);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+// 入场：logo 从小放大 + 高光闪入
+@keyframes logo-in {
+  0% {
+    transform: translate(-50%, -50%) scale(0.3);
+    opacity: 0;
+    filter: brightness(2.2) blur(8px);
+  }
+  60% {
+    transform: translate(-50%, -50%) scale(1.12);
+    opacity: 1;
+    filter: brightness(1.5) blur(0);
+  }
   100% {
     transform: translate(-50%, -50%) scale(1);
-    box-shadow: 0 0 20px rgba(66, 184, 131, 0.1);
-  }
-  50% {
-    transform: translate(-50%, -50%) scale(1.2);
-    box-shadow: 0 0 45px rgba(66, 184, 131, 0.25);
+    opacity: 1;
+    filter: brightness(1) blur(0);
   }
 }
 
-@keyframes dot-bounce {
-  0%,
-  80%,
+// 入场：文字上移淡入
+@keyframes text-in {
+  0% {
+    transform: translateY(18px);
+    opacity: 0;
+  }
   100% {
     transform: translateY(0);
-  }
-  40% {
-    transform: translateY(-6px);
+    opacity: 1;
   }
 }
 
-// --- 退场动画 Keyframes ---
-
-// 退场：Logo 冲刺放大 + 高光 + 模糊消散
+// 退场：logo 向前冲刺放大 + 高光闪烁 + 模糊消散
 @keyframes logo-zoom {
   0% {
     transform: translate(-50%, -50%) scale(1);
     opacity: 1;
     filter: brightness(1) blur(0);
-    box-shadow: 0 0 20px rgba(66, 184, 131, 0.2);
   }
   35% {
     opacity: 1;
     filter: brightness(1.9) blur(0);
-    box-shadow: 0 0 60px rgba(66, 184, 131, 0.6);
   }
   100% {
-    transform: translate(-50%, -50%) scale(2.8);
+    transform: translate(-50%, -50%) scale(2.6);
     opacity: 0;
-    filter: brightness(1) blur(10px);
-    box-shadow: 0 0 0px rgba(66, 184, 131, 0);
+    filter: brightness(1) blur(8px);
   }
 }
 
@@ -305,9 +273,9 @@ onMounted(() => {
     filter: blur(0);
   }
   100% {
-    transform: scale(1.4) rotate(60deg);
+    transform: scale(1.3) rotate(40deg);
     opacity: 0;
-    filter: blur(6px);
+    filter: blur(5px);
   }
 }
 
@@ -318,8 +286,90 @@ onMounted(() => {
     opacity: 1;
   }
   100% {
-    transform: translateY(-18px);
+    transform: translateY(-14px);
     opacity: 0;
+  }
+}
+</style>
+
+<!-- 全局（非 scoped）：loader 退场时主界面从屏幕外推入进场。
+     各区块从各自屏幕边缘外推出：主内容从下、顶栏从上、侧栏从左、右侧大纲从右、页脚从下。
+     注意：左栏 .VPSidebar 仅在 ≥960px 才播入场（窄屏它本就被隐藏，不能弹出来）；
+     其余区块不受断点限制。
+     关键：主内容 .VPContent 不能用 transform / opacity<1 推出——
+     · transform 会让它身上的 "fixed 背景" 被拉进 transform 一起滑动（即"背景图也在推出"的副作用）；
+     · opacity<1 或 transform 还会让 .VPContent 成为 backdrop root，内部玻璃卡片的
+       backdrop-filter 采不到 .Layout 上的真实页面背景 → 高斯模糊失效。
+     故 .VPContent 改用 relative 定位 + top 推出（top 既不创建 backdrop root、也不影响 fixed 背景），
+     opacity 恒为 1：玻璃卡片因此直接采样 .Layout 那份静态页面背景，推出期间高斯模糊全程生效、背景也不滑动。 -->
+<style>
+html.entrance-done .VPContent {
+  position: relative;
+  animation: entrance-doc-rise 0.82s cubic-bezier(0.22, 1, 0.36, 1) 0.22s both;
+}
+html.entrance-done .VPNav {
+  animation: entrance-nav-in 0.82s cubic-bezier(0.22, 1, 0.36, 1) 0.22s both;
+}
+/* 首页顶栏：不再单独隐藏玻璃容器。.VPNav 用 top 推出（非 transform），
+   不会创建 backdrop root，内部玻璃 ::before 全程采样真实页面背景，故无需隐藏。
+   让 .VPNavBar.home .container 直接随 .VPNav 一起从顶部推出，避免"直接出现"而非"推出"。 */
+/* 左栏仅在 ≥960px（主题里侧栏转移动态的断点）才入场滑入；窄屏本就隐藏，不再弹出。 */
+@media (min-width: 960px) {
+  html.entrance-done .VPSidebar {
+    animation: entrance-sidebar-in 0.82s cubic-bezier(0.22, 1, 0.36, 1) 0.22s both;
+  }
+}
+html.entrance-done .VPDocAsideOutline {
+  animation: entrance-aside-in 0.82s cubic-bezier(0.22, 1, 0.36, 1) 0.22s both;
+}
+html.entrance-done .VPFooter {
+  animation: entrance-footer-in 0.82s cubic-bezier(0.22, 1, 0.36, 1) 0.22s both;
+}
+
+@keyframes entrance-doc-rise {
+  0% {
+    top: 100vh;
+  }
+  100% {
+    top: 0;
+  }
+}
+@keyframes entrance-nav-in {
+  0% {
+    top: -100%;
+  }
+  100% {
+    top: 0;
+  }
+}
+@keyframes entrance-sidebar-in {
+  0% {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@keyframes entrance-footer-in {
+  0% {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes entrance-aside-in {
+  0% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
   }
 }
 </style>
