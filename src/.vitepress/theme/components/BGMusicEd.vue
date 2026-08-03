@@ -897,25 +897,41 @@ watch(
   flex-direction: column;
   gap: 4px;
   padding-right: 4px;
+  scrollbar-width: auto !important;           /* Firefox：覆盖全局 hidden */
+  -ms-overflow-style: auto !important;        /* IE/旧 Edge */
 }
 
 .search-results::-webkit-scrollbar {
-  width: 10px;
+  width: 10px !important;
+  height: auto !important;
+  display: block !important;
+  -webkit-appearance: auto !important;
+  appearance: auto !important;
+}
+
+.search-results::-webkit-scrollbar-track {
+  background: transparent !important;
+  border: none !important;
 }
 
 .search-results::-webkit-scrollbar-thumb {
-  background: var(--zm-light-dark-low);
-  border-radius: 50px;
+  background: var(--zm-light-dark-low) !important;
+  border-radius: 50px !important;
 }
 
 @media (min-width: 960px){
   .search-results::-webkit-scrollbar-thumb:hover {
-    background: var(--zm-light-dark-medium);
+    background: var(--zm-light-dark-medium) !important;
   }
 }
 
 .search-results::-webkit-scrollbar-thumb:active {
-  background: var(--zm-light-dark-high);
+  background: var(--zm-light-dark-high) !important;
+}
+
+.search-results::-webkit-scrollbar-corner {
+  background: transparent !important;
+  border: none !important;
 }
 
 .result-item {
@@ -1036,25 +1052,41 @@ watch(
   gap: 4px;
   padding-right: 4px;
   min-height: 0;
+  scrollbar-width: auto !important;           /* Firefox：覆盖全局 hidden */
+  -ms-overflow-style: auto !important;        /* IE/旧 Edge */
 }
 
 .playlist-scroll::-webkit-scrollbar {
-  width: 8px;
+  width: 8px !important;
+  height: auto !important;
+  display: block !important;
+  -webkit-appearance: auto !important;
+  appearance: auto !important;
+}
+
+.playlist-scroll::-webkit-scrollbar-track {
+  background: transparent !important;
+  border: none !important;
 }
 
 .playlist-scroll::-webkit-scrollbar-thumb {
-  background: var(--zm-light-dark-low);
-  border-radius: 50px;
+  background: var(--zm-light-dark-low) !important;
+  border-radius: 50px !important;
 }
 
 @media (min-width: 960px){
   .playlist-scroll::-webkit-scrollbar-thumb:hover {
-    background: var(--zm-light-dark-medium);
+    background: var(--zm-light-dark-medium) !important;
   }
 }
 
 .playlist-scroll::-webkit-scrollbar-thumb:active {
-  background: var(--zm-light-dark-high);
+  background: var(--zm-light-dark-high) !important;
+}
+
+.playlist-scroll::-webkit-scrollbar-corner {
+  background: transparent !important;
+  border: none !important;
 }
 
 /* ---- 空状态 ---- */

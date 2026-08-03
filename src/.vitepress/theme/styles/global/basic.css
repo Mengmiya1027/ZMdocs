@@ -1,11 +1,45 @@
-html::-webkit-scrollbar {
-    width: 6px;
-    background: transparent;
+/* 全局隐藏原生滚动条。
+   覆盖：Firefox(scrollbar-width)、旧 IE/Edge(-ms-overflow-style)、
+   WebKit 桌面(Chrome/Edge)、Android Chromium(OPPO/via)、
+   以及 X5 内核(微信/QQ浏览器/QQ内置) —— X5 会忽略 display:none，
+   故必须用 零宽 + 透明 + -webkit-appearance:none 兜底，且 !important 压过其他样式。
+   注意：X5 内核要求 -webkit- 前缀规则写在标准属性之前，故 -webkit-overflow-scrolling 放前面。 */
+* {
+    -webkit-overflow-scrolling: touch; /* 惯性滚动（iOS/Android WebView 必需），写在标准属性前 */
+    scrollbar-width: none;       /* Firefox / 火狐系移动端 */
+    -ms-overflow-style: none;   /* IE / 旧 Edge / Windows Phone */
+}
+/* WebKit 系：Chrome / Edge / Android Chromium / OPPO / via / 现代 X5。
+   用零宽 + 透明 + 去除原生外观，避免黑条；!important 防止被 VitePress 自带样式覆盖。 */
+::-webkit-scrollbar {
+    width: 0 !important;
+    height: 0 !important;
+    display: none !important;
+    background: transparent !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+}
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-thumb,
+::-webkit-scrollbar-corner,
+::-webkit-scrollbar-track-piece {
+    background: transparent !important;
+    border: none !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
 }
 
-html::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 10px;
+/* 玻璃浮动滚动条配色（随明暗主题切换）：半透明基底 + 细描边，避免刺眼白边 */
+:root,
+html.dark {
+    --zm-scroll-glass-bg: rgba(255, 255, 255, 0.18);
+    --zm-scroll-glass-border: rgba(255, 255, 255, 0.35);
+    --zm-scroll-glass-hover-bg: rgba(255, 255, 255, 0.34);
+}
+html:not(.dark) {
+    --zm-scroll-glass-bg: rgba(0, 0, 0, 0.12);
+    --zm-scroll-glass-border: rgba(0, 0, 0, 0.18);
+    --zm-scroll-glass-hover-bg: rgba(0, 0, 0, 0.22);
 }
 
 .VPImage.logo {
@@ -27,8 +61,4 @@ html::-webkit-scrollbar-thumb {
     .VPNavBarTitle .title span{
         text-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
     }
-}
-
-* {
-    -webkit-tap-highlight-color: transparent;
 }

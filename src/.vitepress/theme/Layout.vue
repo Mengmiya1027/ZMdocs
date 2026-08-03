@@ -2,6 +2,7 @@
 import DefaultTheme from 'vitepress/theme'
 import EntranceLoading from './components/EntranceLoading.vue'
 import BGMusic from "./components/BGMusic.vue";
+import CustomScrollbar from './components/CustomScrollbar.vue'
 
 const Layout = DefaultTheme.Layout
 </script>
@@ -11,4 +12,6 @@ const Layout = DefaultTheme.Layout
   <EntranceLoading />
   <BGMusic />
   <Layout />
+  <!-- 玻璃浮动滚动条：全局隐藏原生滚动条后接管视觉与拖拽 -->
+  <CustomScrollbar />
 </template>
