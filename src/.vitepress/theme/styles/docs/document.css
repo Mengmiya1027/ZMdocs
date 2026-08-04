@@ -77,3 +77,11 @@
     margin-left: auto !important;
     margin-right: auto !important;
 }
+
+/* 正文标题卡片收缩（对齐 main：标题收缩为内容宽度并居中） */
+.content-container:has(> .main) :is(h1, h2, h3, h4, h5, h6) {
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
