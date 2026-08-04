@@ -44,3 +44,36 @@
 .dark .VPDocAsideOutline .content {
   border-left-color: rgba(255, 255, 255, 0.18) !important;
 }
+
+/* ============================================================
+   正文对齐工具类（从 main 分支同步）
+   - .align-*   ：控制文本水平对齐（左/中/右）
+   - .compact-* ：让块级元素宽度收缩为内容宽度，并贴左/居中/贴右，
+                  用于让代码块、提示框等不撑满整行、可左右排布。
+   不依赖全局 .main 容器，局部标记 { .compact-left } 等即可生效。
+   ============================================================ */
+.align-left {
+    text-align: left;
+}
+.align-center {
+    text-align: center;
+}
+.align-right {
+    text-align: right;
+}
+
+.compact-left {
+    width: fit-content !important;
+    margin-left: 0 !important;
+    margin-right: auto !important;
+}
+.compact-right {
+    width: fit-content !important;
+    margin-right: 0 !important;
+    margin-left: auto !important;
+}
+.compact-center {
+    width: fit-content !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
