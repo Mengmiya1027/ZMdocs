@@ -8,6 +8,9 @@ import { useSidebarHeight } from "./utils/useSidebarHeight";
 import { setupOutlineSmoothScroll, setupBackToTopAnimation } from "./utils/outlineScroll";
 import { setupContentTransition, playDocSwitchAnimation } from "./utils/contentTransition";
 
+// 文章元信息栏（作者 / 创建时间 / 字数 / 阅读时长）
+import PageInfo from "./components/PageInfo.vue";
+
 // 主题统一入口
 import "./styles/index.css"
 
@@ -18,6 +21,7 @@ export default {
     ...DefaultTheme,
     Layout,
     enhanceApp({ app, router }) {
+        app.component("PageInfo", PageInfo)
         // 单个 setup 失败不应连累其它动画（避免“所有动画都没了”）
         const safe = (label: string, fn: () => void) => {
             try { fn() }

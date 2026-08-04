@@ -50,7 +50,7 @@ function generateSidebar(dir, basePath = '', depth = 0) {
 
             const fm = readFrontmatter(fullPath)
 
-            // 隐藏规则
+            // 隐藏规则（仅作用于普通文件自身）
             if (fm.Hidden === true) continue
 
             // 标题：优先 SideBar → 文件名（去扩展名，格式化）
@@ -78,8 +78,8 @@ function generateSidebar(dir, basePath = '', depth = 0) {
             const hasIndex = fs.existsSync(indexMd)
             const indexFm = hasIndex ? readFrontmatter(indexMd) : {}
 
-            // 若 index.md 被标记隐藏，整个分组都不显示
-            if (hasIndex && indexFm.Hidden === true) continue
+            // 若 index.md 被标记 GroupHidden，整个分组都不显示
+            if (hasIndex && indexFm.GroupHidden === true) continue
 
             // 分组标题：优先 SideBarTitle → 文件夹名格式化
             const groupText = hasIndex && indexFm.SideBarTitle

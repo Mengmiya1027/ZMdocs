@@ -14,6 +14,7 @@ const reduceMotion =
 const PROX = 64 // 鼠标距右缘多近算"靠近"
 const IDLE_HIDE = 600 // 滚动停止后多久自动推出
 const NEAR_HIDE = 300 // 鼠标离远 / thumb 移出后多久推出
+const NEAR_KEEP = 1200 // 鼠标靠近右缘时的隐藏延迟：避免"鼠标停右缘静止"死区（原只 clearTimeout 不 scheduleHide → 永久不隐藏）
 const RESIZE_HIDE = 150 // 缩窗后多久自动推出（比 hover 更短：缩窗非交互意图）
 
 let viewportH = 0
@@ -26,6 +27,7 @@ let dragging = false
 let startY = 0
 let startScroll = 0
 let hideTimer: number | undefined
+let measureTimer: number | undefined
 let mo: MutationObserver | undefined
 let lastMouseX = 1e9
 
@@ -94,6 +96,7 @@ function show() {
 }
 // 调度推出（断点倒计时，可被新的 show 打断）
 function scheduleHide(delay: number) {
+  if (dragging) return // 拖动期间绝不隐藏，避免拖到一半滚动条消失
   if (hideTimer) clearTimeout(hideTimer)
   hideTimer = window.setTimeout(() => {
     visible.value = false
@@ -109,12 +112,8 @@ function onScroll() {
     })
   }
   show()
-  // 鼠标不在靠近区时才按"空闲"倒计时推出；鼠标靠近则保持
-  if (isNear()) {
-    if (hideTimer) clearTimeout(hideTimer)
-  } else {
-    scheduleHide(IDLE_HIDE)
-  }
+  // 靠近右缘也按较长延迟安排隐藏，避免"鼠标停右缘静止"死区
+  scheduleHide(isNear() ? NEAR_KEEP : IDLE_HIDE)
 }
 
 // 鼠标全局移动：靠近右缘推入并保持，离远 0.3s 推出
@@ -122,10 +121,22 @@ function onMouseMove(e: MouseEvent) {
   lastMouseX = e.clientX
   if (isNear()) {
     show()
-    if (hideTimer) clearTimeout(hideTimer)
+    scheduleHide(NEAR_KEEP) // 靠近右缘：排较长隐藏，而非永久保持
   } else {
     scheduleHide(NEAR_HIDE)
   }
+}
+// 鼠标真正离开窗口（移到浏览器外/桌面）：立即隐藏。
+// 否则鼠标移出后浏览器不再投递 mousemove，状态卡在显示，
+// 必须等窗口重新 focus（点一下）才恢复投递 —— 即用户遇到的"需要点一下才收回"。
+function onDocLeave() {
+  if (dragging) return
+  visible.value = false
+}
+// 窗口失焦（切到别的程序）：同样立即隐藏
+function onBlur() {
+  if (dragging) return
+  visible.value = false
 }
 
 function onThumbEnter() {
@@ -158,6 +169,7 @@ function onThumbUp(e: PointerEvent) {
   dragging = false
   document.body.style.userSelect = ''
   ;(e.target as HTMLElement).releasePointerCapture?.(e.pointerId)
+  scheduleHide(NEAR_HIDE) // 松手后安排隐藏，避免"松手后鼠标停在 thumb 上静止"死区
 }
 
 const route = useRoute()
@@ -172,10 +184,14 @@ onMounted(() => {
   window.addEventListener('resize', onResize)
   window.addEventListener('load', measure)
   window.addEventListener('mousemove', onMouseMove, { passive: true })
+  window.addEventListener('blur', onBlur)
+  document.addEventListener('mouseleave', onDocLeave)
   // 内容高度变化（图片 / 字体 / 动态内容 / 客户端路由）时重新测量
+  // 注意：此处只能用独立的 measureTimer，绝不能 clearTimeout(hideTimer)——
+  // 否则页面任何持续的 DOM 变动都会打断"自动隐藏倒计时"，导致滚动条卡在显示。
   mo = new MutationObserver(() => {
-    if (hideTimer) clearTimeout(hideTimer)
-    hideTimer = window.setTimeout(measure, 150)
+    if (measureTimer) clearTimeout(measureTimer)
+    measureTimer = window.setTimeout(measure, 150)
   })
   mo.observe(document.body, { childList: true, subtree: true, characterData: true })
 })
@@ -185,7 +201,10 @@ onBeforeUnmount(() => {
   window.removeEventListener('resize', onResize)
   window.removeEventListener('load', measure)
   window.removeEventListener('mousemove', onMouseMove)
+  window.removeEventListener('blur', onBlur)
+  document.removeEventListener('mouseleave', onDocLeave)
   if (hideTimer) clearTimeout(hideTimer)
+  if (measureTimer) clearTimeout(measureTimer)
   mo?.disconnect()
 })
 </script>

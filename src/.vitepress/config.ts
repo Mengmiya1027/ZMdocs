@@ -1,6 +1,8 @@
 import { defineConfig } from 'vitepress'
 import { generateSidebar } from './theme/utils/sidebarGenerator.js'
 import path from 'path'
+import { execSync } from 'child_process'
+import fs from 'fs'
 
 export default defineConfig({
   title: "ZMdocs",
@@ -25,11 +27,82 @@ export default defineConfig({
     },
   },
 
+  async transformPageData(pageData, ctx) {
+    // 只处理有源文件路径的页面
+    if (!pageData.filePath) return
+
+    // 获取源目录绝对路径（siteConfig.srcDir 必定存在）
+    const srcDir = ctx.siteConfig.srcDir
+    const filePath = pageData.filePath // 例如 'guide/index.md'
+    const absPath = path.resolve(srcDir, filePath)
+
+    // 确保文件存在（防御性检查）
+    if (!fs.existsSync(absPath)) return
+
+    const content = fs.readFileSync(absPath, 'utf-8')
+
+    // ----- 1) 作者 -----
+    if (!pageData.frontmatter.author) {
+      try {
+        const author = execSync(
+            `git log --diff-filter=A --follow --format="%an" -- "${absPath}"`,
+            { encoding: 'utf-8' }
+        ).trim()
+        pageData.frontmatter.author = author || '未知'
+      } catch {
+        pageData.frontmatter.author = '未知'
+      }
+    }
+
+    // ----- 2) 创建时间 -----
+    try {
+      const createdAt = execSync(
+          `git log --diff-filter=A --follow --format="%aI" -- "${absPath}"`,
+          { encoding: 'utf-8' }
+      ).trim()
+      pageData.frontmatter.createdAt = createdAt
+    } catch {
+      pageData.frontmatter.createdAt = null
+    }
+
+    // ----- 3) 字数与阅读时长 -----
+    const cleanContent = content
+        .replace(/---[\s\S]*?---/, '')
+        .replace(/[#*`>\-\n\r\[\]()!|]/g, '')
+        .replace(/\s+/g, '')
+    const chineseChars = (cleanContent.match(/[\u4e00-\u9fa5]/g) || []).length
+    const englishWords = (
+        cleanContent.replace(/[\u4e00-\u9fa5]/g, ' ').match(/\b\w+\b/g) || []
+    ).length
+    const wordCount = chineseChars + englishWords
+    const readingTime = Math.ceil(wordCount / 300) || 1
+
+    pageData.frontmatter.wordCount = wordCount
+    pageData.frontmatter.readingTime = readingTime
+  },
+
+  markdown: {
+    config: (md) => {
+      md.core.ruler.push('insert_after_title', (state) => {
+        const tokens = state.tokens
+        for (let i = 0; i < tokens.length; i++) {
+          if (tokens[i].type === 'heading_close' && tokens[i].tag === 'h1') {
+            const insert = new state.Token('html_inline', '', 0)
+            insert.content = '<PageInfo/>'
+            tokens.splice(i + 1, 0, insert)
+            break
+          }
+        }
+      })
+    }
+  },
+
   themeConfig: {
     logo: '/images/basic/zm.jpg',
     nav: [
       { text: '首页', link: '/' },
-      { text: '进来坐坐', link: '/start/' }
+      { text: '进来坐坐', link: '/start/' },
+      { text: '共建', link: '/community/' },
     ],
 
     sidebar: {
