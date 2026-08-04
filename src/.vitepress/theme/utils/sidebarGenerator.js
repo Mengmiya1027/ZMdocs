@@ -79,7 +79,7 @@ function generateSidebar(dir, basePath = '', depth = 0) {
             const indexFm = hasIndex ? readFrontmatter(indexMd) : {}
 
             // 若 index.md 被标记隐藏，整个分组都不显示
-            if (hasIndex && indexFm.Hidden === true) continue
+            if (hasIndex && indexFm.GroupHidden === true) continue;
 
             // 分组标题：优先 SideBarTitle → 文件夹名格式化
             const groupText = hasIndex && indexFm.SideBarTitle

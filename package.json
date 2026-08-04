@@ -2,6 +2,8 @@
   "name": "zmdocs",
   "version": "Preview28",
   "devDependencies": {
+    "@types/node": "^26.1.2",
+    "dayjs": "^1.11.21",
     "sass-embedded": "^1.100.0",
     "vitepress": "^2.0.0-alpha.18"
   },

@@ -16,7 +16,6 @@
     height: 0 !important;
     display: none !important;
     background: transparent !important;
-    -webkit-appearance: none !important;
     appearance: none !important;
 }
 ::-webkit-scrollbar-track,
@@ -25,7 +24,6 @@
 ::-webkit-scrollbar-track-piece {
     background: transparent !important;
     border: none !important;
-    -webkit-appearance: none !important;
     appearance: none !important;
 }
 

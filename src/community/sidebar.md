@@ -18,23 +18,27 @@ title: 侧边栏创建
 ## 1️⃣ 一个 Markdown 文件 = 一个菜单项 { .compact-left }
 
 新建任何 `.md` 文件，它都会自动成为侧边栏里的一个链接。  
-通过文件**顶部 `` 包裹的区域**，可以控制它的标题、排序和显隐。
+通过文件**顶部 `---` 包裹的区域**，可以控制它的标题、排序和显隐。
 
 ### 可用的配置项 { .compact-left }
 
 ::: code-group
 ```markdown
-
-SideBar: 快速开始      # 菜单上显示的名字
-title: 快速开始         # 如果没写 SideBar，就用这个
-Order: 1               # 排序数字，越小越靠前
-Hidden: true           # 设为 true 会从侧边栏隐藏
-
-
+---
+SideBar: 快速开始            # 菜单上显示的名字
+title: 快速开始              # 如果没写 SideBar，就用这个
+Order: 1                   # 排序数字，越小越靠前
+Hidden: true               # 设为 true 会从侧边栏隐藏该文件自身
+SideBarTitle: 入门指南      # （仅在 index.md 中有效）文件夹分组的名字
+GroupOrder: 2              # （仅在 index.md 中有效）文件夹分组的顺序，越小越靠前
+GroupHidden: true          # （仅在 index.md 中有效）设为 true 会隐藏整个文件夹分组
+---
 # 这里是文章标题
 正文...
 ```
 :::
+
+> **注意**：`GroupHidden` 只对 `index.md` 起作用，用于控制该文件夹是否作为分组出现。
 
 ### 标题的优先级 { .compact-left }
 
@@ -78,18 +82,19 @@ src/
 
 ::: code-group
 ```markdown
-
+---
 SideBarTitle: 入门指南
 GroupOrder: 2
-
-
+GroupHidden: true    # 可选，隐藏整个分组
+---
 欢迎！
 ```
 :::
 
 - `SideBarTitle` 就是分组显示的名称（不写则用文件夹名）。
 - `GroupOrder` 控制这个分组在父级列表中的顺序，数字越小越靠前。
-- 如果在 `index.md` 里写 `Hidden: true`，**整个分组都会从侧边栏消失**。
+- 如果在 `index.md` 里写 `GroupHidden: true`，**整个分组都会从侧边栏消失**。
+- 若只写 `Hidden: true`，则仅隐藏 `index.md` 自身的链接，分组依然存在且其他子项正常显示。
 
 ### 分组的标题本身不能点击 { .compact-left }
 
@@ -136,9 +141,11 @@ GroupOrder: 2
 
 ## 5️⃣ 隐藏某些内容 { .compact-left }
 
-- 单个文件：在文件顶部写 `Hidden: true`，它就会从侧边栏消失（直接访问网址仍然能打开）。
-- 整个分组：在分组的 `index.md` 里写 `Hidden: true`。
+- **单个文件**（包括 `index.md` 自身）：在文件顶部写 `Hidden: true`，它就会从侧边栏消失（直接访问网址仍然能打开）。
+- **整个分组**：在分组的 `index.md` 里写 `GroupHidden: true`，则该分组及内部所有内容都不会出现在侧边栏。
 - `public` 文件夹和 `.vitepress` 文件夹**永远自动忽略**，放进去的图片、样式等不会出现在侧边栏。
+
+> **提示**：如果你只想隐藏一个文件夹里的 `index.md` 入口，但保留分组和其他子项，请使用 `Hidden: true`，而不是 `GroupHidden`。
 
 
 
@@ -162,7 +169,7 @@ src/
 │  └─ 配置.md     (Order:3)
 ├─ API/
 │  ├─ 接口.md     (SideBar: 接口列表)
-│  └─ 错误码.md   (Hidden: true)
+│  └─ 错误码.md   (Hidden: true)          # 仅隐藏该文件
 └─ 常见问题.md    (title: FAQ, Order:99)
 ```
 :::
@@ -182,6 +189,8 @@ src/
 📄 FAQ                          (独立菜单，Order=99)
 ```
 :::
+
+若希望在示例中隐藏 `API` 整个分组，可在 `API/index.md` 中设置 `GroupHidden: true`（假设存在 `index.md`），该分组将完全消失。
 
 
 

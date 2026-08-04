@@ -717,7 +717,6 @@ watch(
   overflow: hidden;
   background: var(--vp-c-text-1);
   backdrop-filter: blur(16px) saturate(1.4);
-  -webkit-backdrop-filter: blur(16px) saturate(1.4);
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 24px;
   box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5);
@@ -905,7 +904,6 @@ watch(
   width: 10px !important;
   height: auto !important;
   display: block !important;
-  -webkit-appearance: auto !important;
   appearance: auto !important;
 }
 
@@ -1060,7 +1058,6 @@ watch(
   width: 8px !important;
   height: auto !important;
   display: block !important;
-  -webkit-appearance: auto !important;
   appearance: auto !important;
 }
 

@@ -42,4 +42,10 @@
     --zm-light-dark-high: rgb(255 255 255 / 0.4);
 
     --zm-light-dark-limit: rgb(255 255 255);
+
+    /* 暗色模式下整体降低玻璃白底浓度，减少“淡淡白颜色”的洗白感 */
+    --zm-background-low: rgba(255, 255, 255, 0.08);
+    --zm-background-medium: rgba(255, 255, 255, 0.18);
+    --zm-background-high: rgba(255, 255, 255, 0.38);
+
 }

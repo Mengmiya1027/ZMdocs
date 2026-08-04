@@ -1,6 +1,6 @@
 ---
 SideBarTitle: 共建
-GroupOrder: 2
+GroupOrder: 3
 title: 关于这个站点……
 Order: 1
 ---
