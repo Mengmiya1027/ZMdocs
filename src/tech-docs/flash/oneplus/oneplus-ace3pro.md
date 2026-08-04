@@ -1,9 +1,6 @@
 ---
 title: 一加ace3pro root教程
-date: 2026-04-16
-updated: 2026-04-16
-category: 玩机与刷机
-brand: 一加
+author: SB5133
 tags: [刷机, Android, root, 小天才]
 ---
 

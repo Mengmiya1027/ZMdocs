@@ -205,6 +205,10 @@
               </svg>
               清空列表
             </button>
+            <span class="footer-tip">
+              音乐API来源于
+              <a class="tip-link" href="https://metingapi.nanorocky.top/" target="_blank">呆呆酪灰的 Meting-API</a>
+            </span>
             <span class="footer-hint">共 {{ playlist.length }} 首</span>
           </div>
         </div>
@@ -528,7 +532,7 @@ watch(
   width: 100vw;
   height: 100vh;
   background: rgba(0, 0, 0, 0.45);
-  backdrop-filter: blur(12px);
+  backdrop-filter: var(--zm-backdrop-blur-medium);
   -webkit-backdrop-filter: blur(12px);
   z-index: 9999;
 }
@@ -1290,10 +1294,24 @@ watch(
   font-weight: 1000;
 }
 
+.footer-tip{
+  color: var(--vp-c-text-2);
+  font-weight: 1000;
+  font-size: 13px;
+}
+
+.tip-link {
+  color: var(--vp-c-brand-1);
+}
+
 /* ============================================================
    响应式（仅调整尺寸，背景已统一）
    ============================================================ */
 @media (max-width: 768px) {
+  .modal-overlay{
+    backdrop-filter: none;
+  }
+
   .modal-window {
     width: 94%;
     max-height: 96vh;
@@ -1432,6 +1450,9 @@ watch(
     font-size: 12px;
     padding: 8px 14px;
   }
+  .footer-tip {
+    font-size: 9px;
+  }
 }
 </style>
 
@@ -1458,5 +1479,12 @@ watch(
 .modal-3d-enter-active,
 .modal-3d-leave-active{
   transition: all 0.7s cubic-bezier(0.29, 0.00, 0.00, 1.00) !important;
+}
+
+@media (max-width: 768px) {
+  .modal-3d-leave-to,
+  .modal-3d-enter-from{
+    transform: translate(-50%)  !important;
+  }
 }
 </style>

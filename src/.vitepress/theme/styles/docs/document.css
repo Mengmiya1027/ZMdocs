@@ -15,12 +15,16 @@
     background-color: rgba(0, 0, 0, 0.2) !important;
 }
 
-.content-container:has(> .main) p {
+.content-container:has(> .main) :is(p):not(.VPLastUpdated) {
     padding: 0.2em 0.8em;
 }
 
-.content-container:has(> .main) ul {
+.content-container:has(> .main) :is(ul) {
     padding: 0.2em 1.5em;
+}
+
+.content-container:has(> .main) :is(ol) {
+    padding: 0.2em 0.8em 0.2em 2em;
 }
 
 .content-container:has(> .main) :is(h1, h2) {

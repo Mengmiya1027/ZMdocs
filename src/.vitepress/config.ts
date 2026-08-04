@@ -100,6 +100,24 @@ export default defineConfig({
 
   themeConfig: {
     logo: '/images/basic/zm.jpg',
+
+    // @ts-ignore
+    authors: {
+      'Mengmiya1027': {
+        name: '愿Wish',
+        avatar: '/images/basic/mmy.jpg',
+        url: 'https://github.com/Mengmiya1027'
+      },
+      'SB5133': {
+        name: '稚梦',
+        avatar: '/images/basic/zm2.png',
+      },
+      'default': {
+        name: '',// 空字符串表示显示原始作者名
+        avatar: '/images/basic/default.png'
+      }
+    },
+
     nav: [
       { text: '首页', link: '/' },
       { text: '进来坐坐', link: '/start/' },
