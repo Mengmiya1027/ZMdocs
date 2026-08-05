@@ -705,6 +705,7 @@ const downloadMusic = async (index) => {
     const fileName = `${audio.title} - ${audio.author}.${ext}`
 
     // 4. 触发下载
+    await showAlert('已尝试发起下载，请稍等')
     const link = document.createElement('a')
     link.href = URL.createObjectURL(blob)
     link.download = fileName
@@ -739,6 +740,7 @@ const downloadImage = async (index) => {
 
     const fileName = `${audio.title} - cover.${ext}`
 
+    await showAlert('已发起下载，请稍等')
     const link = document.createElement('a')
     link.href = URL.createObjectURL(blob)
     link.download = fileName
@@ -749,7 +751,7 @@ const downloadImage = async (index) => {
     setTimeout(() => URL.revokeObjectURL(link.href), 1000)
   } catch (err) {
     console.error('下载封面失败:', err)
-    await showAlert('下载封面失败，请检查图片链接')
+    await showAlert('下载封面失败。QQ音乐来源封面咱不支持下载')
   }
 }
 

@@ -108,8 +108,8 @@ const refreshMusicList = async () => {
 
 // 初始化加载数据
 onMounted(async () => {
-  // ---------- 原有逻辑（不动） ----------
   const audio = new Audio()
+  audio.preload = 'auto'
   audioRef.value = audio
   setupAudioEvents(audio)
 
@@ -266,6 +266,9 @@ const setupAudioEvents = (audio: HTMLAudioElement) => {
       progress.value = 0
       isFirstLoadCompleted.value = true
     }
+    if (isPlaying.value) {
+      audio.play().catch(() => { /* 忽略自动播放失败 */ })
+    }
   })
 
   audio.addEventListener('error', () => {
@@ -311,6 +314,10 @@ const loadMusic = (index: number) => {
   // 加载音频
   audioRef.value.src = music.flink
   audioRef.value.load()
+
+  if (isPlaying.value) {
+    audioRef.value.play().catch(() => {})
+  }
 }
 
 // 切换折叠状态
