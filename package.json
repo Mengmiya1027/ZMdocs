@@ -1,6 +1,6 @@
 {
   "name": "zmdocs",
-  "version": "Preview28",
+  "version": "Preview32",
   "devDependencies": {
     "@types/node": "^26.1.2",
     "dayjs": "^1.11.21",

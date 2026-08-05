@@ -23,7 +23,7 @@ const isCoverValid = ref<boolean | null>(null)
 const isAudioValid = ref<boolean | null>(null)
 
 // 折叠状态管理
-const isExpanded = ref(true)
+const isExpanded = ref(false)
 
 // 音频控制状态
 const audioRef = ref<HTMLAudioElement | null>(null)
@@ -45,32 +45,53 @@ const areControlsVisible = ref(true)
 const interactionTimer = ref<NodeJS.Timeout | null>(null)
 const MOBILE_INACTIVITY_TIMEOUT = 5000 // 5秒无交互隐藏按钮
 
-// ============= 新增：从 localStorage 读取播放列表 =============
+// ============= 从 localStorage 读取播放列表 =============
 const STORAGE_KEY = 'music-list'
 
+// 添加一个标志，防止重复展开
+let hasExpandedOnEntrance = false
+let entranceHandler: (() => void) | null = null
+
 // 刷新列表（从 localStorage 读取）
-const refreshMusicList = () => {
+// 原同步函数 → 改为 async
+const refreshMusicList = async () => {
   try {
     const stored = localStorage.getItem(STORAGE_KEY)
-    if (stored) {
+    if (stored !== null) {
       const parsed = JSON.parse(stored)
-      if (Array.isArray(parsed) && parsed.length > 0) {
+      if (Array.isArray(parsed)) {
         musicList.value = parsed
-        // 如果当前索引超出，重置
         if (currentIndex.value >= musicList.value.length) {
           currentIndex.value = 0
         }
-        // 如果列表非空，加载当前索引的音乐
         if (musicList.value.length > 0) {
           loadMusic(currentIndex.value)
         }
         return
       }
     }
-    // 无数据或空数组
+    // ----- 无数据或空数组 → 加载默认数据 -----
+    let defaultData = null
+    try {
+      const response = await fetch('/data/default-music.json')
+      if (response.ok) {
+        defaultData = await response.json()
+        if (Array.isArray(defaultData) && defaultData.length > 0) {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultData))
+          musicList.value = defaultData
+          currentIndex.value = 0
+          loadMusic(0)
+          // 尝试自动播放（浏览器可能阻止，但会进入交互等待）
+          tryAutoPlay()
+          return
+        }
+      }
+    } catch (fetchErr) {
+      console.warn('加载默认音乐失败:', fetchErr)
+    }
+    // 默认数据也失败 → 清空
     musicList.value = []
     currentIndex.value = 0
-    // 清空音频
     if (audioRef.value) {
       audioRef.value.src = ''
       audioRef.value.load()
@@ -84,25 +105,16 @@ const refreshMusicList = () => {
 }
 
 // 保存列表到 localStorage（供子组件调用，但子组件自己操作后通知父组件刷新即可，此方法供内部使用）
-const saveMusicList = (list: Music[]) => {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(list))
-  } catch (e) {
-    console.error('保存 localStorage 失败:', e)
-  }
-}
-
-// ===========================================================
 
 // 初始化加载数据
-onMounted(() => {
-  // 创建音频元素
+onMounted(async () => {
+  // ---------- 原有逻辑（不动） ----------
   const audio = new Audio()
   audioRef.value = audio
   setupAudioEvents(audio)
 
   // 读取本地播放列表
-  refreshMusicList()
+  await refreshMusicList()
 
   // 监听窗口大小变化
   const handleResize = () => {
@@ -122,7 +134,7 @@ onMounted(() => {
   };
 
   window.addEventListener('resize', handleResize)
-  handleResize()
+  handleResize()  // 此时移动端会被折叠
 
   // 启动交互检查计时器
   startInteractionTimer()
@@ -131,7 +143,36 @@ onMounted(() => {
   if (musicList.value.length > 0 && !isPlaying.value) {
     setTimeout(tryAutoPlay, 1000)
   }
+
+  // ---------- 新增：展开控制 ----------
+  // 检查是否已经加载完成（类已存在）
+  if (document.documentElement.classList.contains('entrance-done')) {
+    // 如果已经完成，直接展开（但通常不会，因为 onMounted 比 dismiss 早）
+    expandPlayer()
+  } else {
+    // 否则监听 entrance-done 事件
+    entranceHandler = () => {
+      expandPlayer()
+      window.removeEventListener('entrance-done', entranceHandler!)
+    }
+    window.addEventListener('entrance-done', entranceHandler)
+  }
 })
+
+const expandPlayer = () => {
+  if (hasExpandedOnEntrance) return
+  hasExpandedOnEntrance = true
+
+  // 延迟展开，等待加载动画淡出（约 600ms）
+  setTimeout(() => {
+    isExpanded.value = true
+    areControlsVisible.value = true
+    if (interactionTimer.value) {
+      clearTimeout(interactionTimer.value)
+      interactionTimer.value = null
+    }
+  }, 300) // 可调整为 500~800，视觉上平滑
+}
 
 // 跟踪用户交互
 const trackInteraction = () => {
@@ -198,11 +239,17 @@ const handleUserInteraction = (e: Event) => {
 
 // 组件卸载时清理事件监听
 onUnmounted(() => {
+  // 移除 entrance-done 监听
+  if (entranceHandler) {
+    window.removeEventListener('entrance-done', entranceHandler)
+    entranceHandler = null
+  }
+
+  // 原有清理逻辑
   stopListeningUserInteraction()
   if (interactionTimer.value) {
     clearTimeout(interactionTimer.value)
   }
-  // 移除音频事件监听（可选）
   if (audioRef.value) {
     audioRef.value.src = ''
     audioRef.value.load()
@@ -372,13 +419,45 @@ const nextTrack = () => {
 
 // 子组件切换音频（通过 switch-index 事件）
 const handleSwitchAudio = (newIndex: number) => {
-  currentIndex.value = newIndex
-  loadMusic(newIndex)
-  isPlaying.value = true
-  setTimeout(() => {
-    audioRef.value?.play()
-  }, 100)
+  if (newIndex === currentIndex.value && musicList.value.length > 0) {
+    // 同一首歌：仅恢复播放，不重新加载
+    isPlaying.value = true
+    setTimeout(() => {
+      audioRef.value?.play()
+    }, 100)
+  } else {
+    // 切歌：加载新歌并播放
+    currentIndex.value = newIndex
+    loadMusic(newIndex)
+    isPlaying.value = true
+    setTimeout(() => {
+      audioRef.value?.play()
+    }, 100)
+  }
   trackInteraction()
+}
+
+// 只读取列表，不加载音频
+const loadListOnly = () => {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY)
+    if (stored) {
+      const parsed = JSON.parse(stored)
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        musicList.value = parsed
+        if (currentIndex.value >= musicList.value.length) {
+          currentIndex.value = musicList.value.length - 1
+        }
+        return
+      }
+    }
+    musicList.value = []
+    currentIndex.value = 0
+  } catch (e) {
+    console.error('读取 localStorage 失败:', e)
+    musicList.value = []
+    currentIndex.value = 0
+  }
 }
 
 // 监听折叠状态变化
@@ -390,31 +469,67 @@ watch(isExpanded, (newVal) => {
   }
 })
 
-// ============= 新增：监听子组件的列表变化事件 =============
+// ============= 监听子组件的列表变化事件 =============
 const handleListChanged = () => {
-  refreshMusicList()
-  // 如果当前播放的歌曲不存在了，重置状态
+  // 记录旧列表长度（用于检测 0→1 场景）
+  const oldLength = musicList.value.length
+  // 记录当前正在播放的歌曲标识（用于判断当前歌是否被删除）
+  const currentMusic = musicList.value[currentIndex.value]
+  const currentId = currentMusic ? `${currentMusic.title}|||${currentMusic.author}` : null
+
+  // 从 localStorage 刷新列表数据（只更新 musicList，不加载音频）
+  loadListOnly()
+
+  // ========== 场景一：从 0 首变为 1 首 ==========
+  if (oldLength === 0 && musicList.value.length === 1) {
+    // 设置为第一首（索引 0）
+    currentIndex.value = 0
+    // 加载音频（异步）
+    loadMusic(0)
+    // 标记为播放状态（等待播放成功）
+    isPlaying.value = true
+    // 延迟播放，确保音频元素就绪
+    setTimeout(() => {
+      audioRef.value?.play().catch(() => {
+        // 播放失败时回退为暂停状态（图标变为播放按钮）
+        isPlaying.value = false
+      })
+    }, 100)
+    return   // 处理完毕，直接返回
+  }
+
+  // ========== 场景二：列表变空 ==========
   if (musicList.value.length === 0) {
     if (audioRef.value) {
+      audioRef.value.pause()
       audioRef.value.src = ''
       audioRef.value.load()
     }
+    isPlaying.value = false
     isAudioValid.value = null
     isCoverValid.value = null
-    isPlaying.value = false
-  } else {
-    // 若当前索引超出，重置
-    if (currentIndex.value >= musicList.value.length) {
-      currentIndex.value = 0
+    return
+  }
+
+  // ========== 场景三：列表非空，检查当前歌曲是否还在 ==========
+  if (currentId) {
+    const foundIndex = musicList.value.findIndex(
+        item => `${item.title}|||${item.author}` === currentId
+    )
+    if (foundIndex !== -1) {
+      // 当前歌曲还在，只更新索引，不重新加载（避免闪断）
+      currentIndex.value = foundIndex
+      return
     }
-    // 重新加载当前索引
-    loadMusic(currentIndex.value)
-    // 如果原本是播放状态，继续播放
-    if (isPlaying.value) {
-      setTimeout(() => {
-        audioRef.value?.play()
-      }, 100)
-    }
+  }
+
+  // ========== 场景四：当前歌曲被删除，加载新索引的歌曲 ==========
+  // loadListOnly 已保证 currentIndex 不越界
+  loadMusic(currentIndex.value)
+  if (isPlaying.value) {
+    setTimeout(() => {
+      audioRef.value?.play()
+    }, 100)
   }
 }
 </script>
@@ -432,6 +547,7 @@ const handleListChanged = () => {
     <div class="music-player">
       <!-- 打开BGMusicEd组件的按钮 - 颜色固定为白色 -->
       <button
+          v-if="musicList.length > 0"
           class="open-editor-btn"
           @click="showMusicEd = !showMusicEd"
           aria-label="打开音乐编辑"
@@ -448,6 +564,7 @@ const handleListChanged = () => {
 
       <!-- 播放模式切换按钮 -->
       <button
+          v-if="musicList.length > 0"
           class="play-mode-btn"
           @click="togglePlayMode"
           :aria-label="`当前播放模式: ${playMode === 'list' ? '列表循环' : playMode === 'single' ? '单曲循环' : '随机播放'}`"
@@ -478,13 +595,15 @@ const handleListChanged = () => {
           v-if="showMusicEd"
           @close="showMusicEd = false"
           :current-index="currentIndex"
+          :is-playing="isPlaying"
           @switch-index="handleSwitchAudio"
           @list-changed="handleListChanged"
+          @pause="togglePlay"
       />
 
       <!-- 没有音乐数据时显示 -->
-      <div v-if="musicList.length === 0" class="no-music">
-        <p>请添加歌曲</p>
+      <div v-if="musicList.length === 0" class="no-music" style="cursor: pointer;" @click="showMusicEd = true">
+        <p class="no-music-info">点击任意位置添加歌曲</p>
       </div>
 
       <!-- 音乐播放器主体 -->
@@ -682,9 +801,12 @@ const handleListChanged = () => {
   white-space: nowrap;
   text-overflow: ellipsis;
   font-size: clamp(1rem, 3vw, 1.5rem);
-  max-width: 100%;
+  padding: 16px;
+  margin: -16px;
+  flex-shrink: 0;
+  overflow: hidden;
+  max-width: calc(100% + 32px);
   font-weight: 800;
-  margin: 0;
   text-align: center;
   color: #ffffff;
   text-shadow: 0 0 16px rgb(255 255 255 / 0.6);
@@ -692,7 +814,13 @@ const handleListChanged = () => {
 
 .music-artist {
   font-size: clamp(0.8rem, 2vw, 1rem);
-  margin: 0;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  padding: 16px;
+  margin: -16px;
+  flex-shrink: 0;
+  overflow: hidden;
+  max-width: calc( 100% + 32px);
   text-align: center;
   font-weight: 600;
   color: #ffffff;
@@ -791,12 +919,34 @@ const handleListChanged = () => {
 }
 
 .no-music {
+  display: flex;
+  height: 100%;
+  width: 100%;
   padding: 20px;
   text-align: center;
-  color: #ccc;
-  background-color: rgba(0, 0, 0, 0.5);
-  border-radius: 15px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background-color: var(--zm-background-medium);
+  backdrop-filter: var(--zm-backdrop-blur-medium);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 24px;
+  box-shadow: 0 2px 32px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+@media (min-width: 960px) {
+  .no-music:hover{
+    transform: scale(1.03);
+  }
+}
+
+.no-music:active{
+  transform: scale(0.95);
+}
+
+.no-music-info{
+  color: var(--vp-c-text-1);
+  font-weight: bold;
+  margin: auto;
+  font-size: 17px
 }
 
 /* 打开编辑组件的按钮样式 */

@@ -35,6 +35,8 @@ const dismiss = () => {
   // 退场时给 <html> 打标记，触发主界面联动进场（与 loader 退场同步浮现）；
   // 动画播完后移除，避免客户端路由切换重建 DOM 时重播。
   document.documentElement.classList.add('entrance-done')
+  // 派发全局事件，通知播放器展开
+  window.dispatchEvent(new CustomEvent('entrance-done'))
   // 1.3s 后主界面推出完成，再移除 class，避免客户端路由切换重建 DOM 时重播。
   setTimeout(() => document.documentElement.classList.remove('entrance-done'), 1300)
 }
@@ -310,6 +312,10 @@ html.entrance-done .VPContent {
 html.entrance-done .VPNav {
   animation: entrance-nav-in 0.82s cubic-bezier(0.22, 1, 0.36, 1) 0.22s both;
 }
+
+html.entrance-done .VPLocalNav.has-sidebar{
+  animation: entrance-nav-in-transform 0.82s cubic-bezier(0.22, 1, 0.36, 1) 0.22s both;
+}
 /* 首页顶栏：不再单独隐藏玻璃容器。.VPNav 用 top 推出（非 transform），
    不会创建 backdrop root，内部玻璃 ::before 全程采样真实页面背景，故无需隐藏。
    让 .VPNavBar.home .container 直接随 .VPNav 一起从顶部推出，避免"直接出现"而非"推出"。 */
@@ -340,6 +346,17 @@ html.entrance-done .VPFooter {
   }
   100% {
     top: 0;
+  }
+}
+@keyframes entrance-nav-in-transform {
+  0% {
+    transform: translateY(-300%);
+  }
+  25% {
+    transform: translateY(-250%);
+  }
+  100% {
+    transform: translateY(0);
   }
 }
 @keyframes entrance-sidebar-in {

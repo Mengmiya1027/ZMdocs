@@ -25,6 +25,8 @@
 
     --zm-light-dark-limit: rgb(0 0 0);
 
+    --zm-ghost-light-dark: #f8f8ff;
+
 }
 
 .dark{
