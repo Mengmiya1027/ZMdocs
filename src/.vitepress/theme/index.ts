@@ -17,6 +17,7 @@ import Layout from './Layout.vue'
 
 // 组件
 import PageInfo from "./components/PageInfo.vue";
+import LinkCard from "./components/LinkCard.vue";
 
 
 export default {
@@ -25,6 +26,7 @@ export default {
     // @ts-ignore
     enhanceApp({ app, router }) {
         app.component("PageInfo", PageInfo)
+        app.component("LinkCard", LinkCard)
         const safe = (label: string, fn: () => void) => {
             try {
                 fn()

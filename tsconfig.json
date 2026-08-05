@@ -1,36 +1,23 @@
 {
+  "extends": "@vue/tsconfig/tsconfig.dom.json",
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "src/**/*.md"   // 仅当你在 .vue 或 .ts 中 import .md 时才需要，否则可省略
+  ],
+  "exclude": ["node_modules", "dist"],
   "compilerOptions": {
-    "target": "ES2020",
-    "useDefineForClassFields": true,
-    "module": "ESNext",
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
-    "skipLibCheck": true,
-
-    /* 模块解析 */
     "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true, // Vite 负责打包，tsc 不输出文件
     "jsx": "preserve",
-
-    /* 严格类型 */
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
-
-    /* 路径别名（可选，常用） */
+    "jsxImportSource": "vue",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./src/*"]
     }
   },
-  "include": [
-    ".vitepress/**/*.ts",
-    ".vitepress/**/*.vue",
-    "docs/**/*.ts",
-    "docs/**/*.vue"
-  ],
-  "exclude": ["node_modules"]
+  "vueCompilerOptions": {
+    "vitePressExtensions": [".md"]
+  }
 }

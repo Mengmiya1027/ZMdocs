@@ -122,7 +122,8 @@
 
 
 /*文档液态玻璃*/
-.content-container:has(> .main) :is(p, h1, h2, h3, h4, h5, h6, ul, ol):not(.VPLastUpdated) {
+.content-container:has(> .main) :is(p, h1, h2, h3, h4, h5, h6, ul, ol):not(.VPLastUpdated):not(:is(.custom-block *))
+{
     background: var(--zm-background-medium); /* 半透明白底 */
     backdrop-filter: var(--zm-backdrop-blur-medium); /* 模糊 + 色彩增强 */
 

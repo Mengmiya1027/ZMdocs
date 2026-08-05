@@ -15,7 +15,7 @@
     background-color: rgba(0, 0, 0, 0.2) !important;
 }
 
-.content-container:has(> .main) :is(p):not(.VPLastUpdated) {
+.content-container:has(> .main) :is(p):not(.VPLastUpdated,.custom-block *) {
     padding: 0.2em 0.8em;
 }
 
@@ -63,6 +63,10 @@
     width: fit-content !important;
     margin-left: auto !important;
     margin-right: auto !important;
+}
+
+.content:has(.content-container){
+    padding-bottom: 16px !important;
 }
 
 @media(max-width: 640px){

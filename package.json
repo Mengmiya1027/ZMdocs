@@ -3,9 +3,9 @@
   "version": "Preview32",
   "devDependencies": {
     "@types/node": "^26.1.2",
+    "@vue/tsconfig": "^0.9.1",
     "dayjs": "^1.11.21",
     "sass-embedded": "^1.100.0",
-    "typescript": "^7.0.2",
     "vitepress": "^2.0.0-alpha.18"
   },
   "scripts": {
