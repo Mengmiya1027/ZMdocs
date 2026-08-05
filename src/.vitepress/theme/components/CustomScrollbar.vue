@@ -16,7 +16,7 @@ const reduceMotion =
   window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
 const PROX = 64
-const IDLE_HIDE = 1500
+const IDLE_HIDE = 700
 const NEAR_HIDE = 300
 const RESIZE_HIDE = 150
 

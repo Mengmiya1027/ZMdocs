@@ -1,5 +1,5 @@
 // 右侧大纲（进度条）导航点击 → 平滑滚动 + 目标标题高亮
-// 优化点：滚动更快、起步即响应（easeOut）、点击其他项或手动滚动可随时打断
+// 优化点：滚动更快、起步即响应（easeOut）、点击其他项或手动滚动可随时打断。支持任意 a[href^="#"] 链接，并增加标题文本匹配回退
 
 let rafId = 0
 let animating = false
@@ -18,31 +18,46 @@ export function setupOutlineSmoothScroll() {
     if (typeof document === 'undefined') return
 
     const onInterrupt = (e: Event) => {
-        if (!animating) return
-        if (e.type === 'keydown') {
-            const scrollKeys = ['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End', ' ', 'Spacebar']
-            // @ts-ignore
-            if (!scrollKeys.includes((e as KeyboardEvent).key)) return
+            if (!animating) return
+            if (e.type === 'keydown') {
+                const scrollKeys = ['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End', ' ', 'Spacebar']
+                // @ts-ignore
+                if (!scrollKeys.includes((e as KeyboardEvent).key)) return
+            }
+            cancelScroll()
         }
-        cancelScroll()
-    }
     ;(['wheel', 'touchmove', 'keydown'] as const).forEach((ev) =>
         window.addEventListener(ev, onInterrupt, { passive: true })
     )
 
     document.addEventListener('click', (e) => {
         const target = e.target as HTMLElement | null
-        // 同时匹配大纲链接和标题锚点
-        const link = target?.closest?.('.outline-link, .header-anchor') as HTMLAnchorElement | null
+        // 扩展：匹配所有以 # 开头的链接（不仅限于大纲和标题锚点）
+        const link = target?.closest?.('a[href^="#"]') as HTMLAnchorElement | null
         if (!link) return
 
         const href = link.getAttribute('href') || ''
-        // @ts-ignore
-        if (!href.startsWith('#') || href.length < 2) return
+        if (href === '#') return // 空锚点不处理
 
-        const id = decodeURIComponent(href.slice(1))
-        const heading = document.getElementById(id)
-        if (!heading) return
+        const id = decodeURIComponent(href.slice(1)).trim()
+        if (!id) return
+
+        // 1. 优先通过 ID 查找
+        let heading = document.getElementById(id)
+
+        // 2. 若未找到，尝试通过标题文本匹配（回退方案）
+        if (!heading) {
+            const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6')
+            for (const h of headings) {
+                // 去除多余空格，并忽略大小写（中文不区分，但可兼容英文）
+                if (h.textContent?.trim() === id) {
+                    heading = h as HTMLElement
+                    break
+                }
+            }
+        }
+
+        if (!heading) return // 找不到目标，不干预默认行为
 
         e.preventDefault()
         cancelScroll()

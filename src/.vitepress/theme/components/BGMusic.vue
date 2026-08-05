@@ -592,6 +592,7 @@ const handleListChanged = () => {
 
       <!-- BGMusicEd组件 -->
       <BGMusicEd
+          class="bg-music-ed"
           v-if="showMusicEd"
           @close="showMusicEd = false"
           :current-index="currentIndex"
@@ -687,6 +688,18 @@ const handleListChanged = () => {
   display: flex;
   align-items: center;
   transition: transform 0.3s ease;
+  pointer-events: none;
+}
+
+.toggle-button,
+.open-editor-btn,
+.play-mode-btn,
+.audio-btn,
+.progress-container,
+.no-music,
+.bg-music-ed,
+.player-container{
+  pointer-events: auto;
 }
 
 .music-player-wrapper.collapsed {
