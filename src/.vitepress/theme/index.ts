@@ -10,6 +10,8 @@ import { setupContentTransition, playDocSwitchAnimation } from "./utils/contentT
 
 // 文章元信息栏（作者 / 创建时间 / 字数 / 阅读时长）
 import PageInfo from "./components/PageInfo.vue";
+// 链接卡片（Mac 红绿灯风格导航卡）
+import LinkCard from "./components/LinkCard.vue";
 
 // 主题统一入口
 import "./styles/index.css"
@@ -22,6 +24,7 @@ export default {
     Layout,
     enhanceApp({ app, router }) {
         app.component("PageInfo", PageInfo)
+        app.component("LinkCard", LinkCard)
         // 单个 setup 失败不应连累其它动画（避免“所有动画都没了”）
         const safe = (label: string, fn: () => void) => {
             try { fn() }

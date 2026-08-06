@@ -1,8 +1,6 @@
 ---
 title: 基础了解 QMMI
-date: 2026-07-08
-updated: 2026-07-08
-category: Android
+author: SB5133
 brand: qmmi
 tags: [Android, qmmi]
 ---
