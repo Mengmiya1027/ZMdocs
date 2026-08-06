@@ -6,7 +6,7 @@
       </Transition>
       <Transition   name="modal-3d" appear @after-leave="onAfterLeave">
       <!-- 主窗口 -->
-        <div v-if="showModal" class="modal-window">
+        <div v-if="showModal" class="modal-window" :class="{ 'dialog-active': dialog.visible }">
           <!-- 关闭 -->
           <button class="btn-close" @click="closeModal" aria-label="关闭">
             <svg viewBox="0 0 24 24" fill="none">
@@ -151,21 +151,24 @@
               <span class="playlist-title">播放列表</span>
             </div>
 
-            <div class="playlist-scroll">
+            <TransitionGroup tag="div" class="playlist-scroll" name="list" move-class="list-move">
+              <!-- 空状态 -->
               <div
                   v-if="playlist.length === 0"
                   class="empty-state"
+                  key="empty"
               >
                 <svg class="empty-icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><path d="M664.393143 0.365714c12.690286 0 24.758857 5.558857 33.024 15.213715l208.457143 243.2c6.765714 7.862857 10.496 17.92 10.496 28.306285v683.264a43.52 43.52 0 0 1-43.52 43.52H131.657143a43.52 43.52 0 0 1-43.52-43.52V43.885714C88.137143 19.858286 107.629714 0.365714 131.657143 0.365714h532.736z m-20.004572 87.04H175.177143v839.424h654.116571V303.140571L644.388571 87.405714z"></path><path d="M502.235429 255.158857a274.285714 274.285714 0 0 1 188.891428 75.081143 275.126857 275.126857 0 1 1-188.891428-75.081143z m0 87.04a188.086857 188.086857 0 1 0 0 376.173714 188.086857 188.086857 0 0 0 0-376.173714z"></path><path d="M309.357714 337.371429a43.52 43.52 0 0 1 61.513143 0l324.278857 324.278857a43.52 43.52 0 1 1-61.549714 61.549714L309.394286 398.921143a43.52 43.52 0 0 1 0-61.549714z"></path></svg>
                 <p>播放列表为空</p>
                 <span>&nbsp搜索歌曲并点击「添加」</span>
               </div>
 
+              <!-- 列表项 -->
               <div
                   v-else
-                  class="playlist-item"
                   v-for="(audio, index) in playlist"
-                  :key="index"
+                  :key="audio.id"
+                  class="playlist-item"
                   :class="{ playing: index === playingIndex }"
               >
                 <img
@@ -179,12 +182,85 @@
                   <div class="playlist-name">{{ audio.title }}</div>
                   <div class="playlist-artist">{{ audio.author }}</div>
                 </div>
+                <!-- ===== 下载按钮组 ===== -->
+                <div class="playlist-actions download-actions">
+                  <button
+                      class="btn-download-music"
+                      @click="downloadMusic(index)"
+                      :disabled="!audio.flink"
+                  >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                      <polyline points="7 10 12 15 17 10" />
+                      <line x1="12" y1="15" x2="12" y2="3" />
+                    </svg>
+                  </button>
+                  <button
+                      class="btn-download-image"
+                      @click="downloadImage(index)"
+                      :disabled="!audio.tlink"
+                  >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                      <circle cx="8.5" cy="8.5" r="1.5" />
+                      <polyline points="21 15 16 10 5 21" />
+                    </svg>
+                  </button>
+                </div>
                 <div class="playlist-actions">
-                  <button class="btn-play" @click="handlePlayClick(index)" :aria-label="index === playingIndex ? '正在播放' : '播放'">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
+                  <!-- 移到最前 -->
+                  <button
+                      class="btn-move scale"
+                      @click="moveToTop(index)"
+                      :disabled="index === 0"
+                      aria-label="移到最前"
+                  >
+                    <svg t="1785913800598" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3505" width="200" height="200"><path d="M557.654996 981.669904c-6.499999 59.041994-88.986991 53.776995-92.179991 0-0.083-40.896996-0.083-641.390937-0.083-641.390937l-283.839972 273.963973c-44.472996 38.308996-97.43499-22.922998-64.344994-63.215994 125.709988-121.895988 351.289966-340.004967 356.507965-345.049966 20.810998-22.608998 53.572995-23.779998 75.721993 0 41.406996 40.037996 348.700966 336.328967 358.028965 346.989966 31.166997 38.741996-19.223998 96.073991-62.242994 63.773994C834.109969 607.310941 557.739996 340.267967 557.739996 340.267967M116.396039 3.332l786.487923 0 0 89.285991L116.396039 92.617991 116.396039 3.332z" p-id="3506"></path></svg>
+                  </button>
+                  <!-- 移到最后 -->
+                  <button
+                      class="btn-move scale"
+                      @click="moveToBottom(index)"
+                      :disabled="index === playlist.length - 1"
+                      aria-label="移到最后"
+                  >
+                    <svg t="1785913800598" class="icon" :style="{ transform: 'rotate(180deg)' }" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3505" width="200" height="200"><path d="M557.654996 981.669904c-6.499999 59.041994-88.986991 53.776995-92.179991 0-0.083-40.896996-0.083-641.390937-0.083-641.390937l-283.839972 273.963973c-44.472996 38.308996-97.43499-22.922998-64.344994-63.215994 125.709988-121.895988 351.289966-340.004967 356.507965-345.049966 20.810998-22.608998 53.572995-23.779998 75.721993 0 41.406996 40.037996 348.700966 336.328967 358.028965 346.989966 31.166997 38.741996-19.223998 96.073991-62.242994 63.773994C834.109969 607.310941 557.739996 340.267967 557.739996 340.267967M116.396039 3.332l786.487923 0 0 89.285991L116.396039 92.617991 116.396039 3.332z" p-id="3506"></path></svg>
+                  </button>
+                  <!-- 上移 -->
+                  <button
+                      class="btn-move"
+                      @click="moveUp(index)"
+                      :disabled="index === 0"
+                      aria-label="上移"
+                  >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                      <polyline points="18 15 12 9 6 15" />
+                    </svg>
+                  </button>
+                  <!-- 下移 -->
+                  <button
+                      class="btn-move"
+                      @click="moveDown(index)"
+                      :disabled="index === playlist.length - 1"
+                      aria-label="下移"
+                  >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                      <polyline points="6 9 12 15 18 9" />
+                    </svg>
+                  </button>
+                </div>
+                <div class="playlist-actions">
+                  <!-- 播放/暂停 -->
+                  <button class="btn-play" @click="handlePlayClick(index)" :aria-label="index === playingIndex && isPlaying ? '暂停' : '播放'">
+                    <svg v-if="index === playingIndex && isPlaying" viewBox="0 0 24 24" fill="currentColor">
+                      <rect x="6" y="4" width="4" height="16" rx="1" />
+                      <rect x="14" y="4" width="4" height="16" rx="1" />
+                    </svg>
+                    <svg v-else viewBox="0 0 24 24" fill="currentColor">
                       <polygon points="5 3 19 12 5 21 5 3" />
                     </svg>
                   </button>
+                  <!-- 删除 -->
                   <button class="btn-delete" @click="removeFromPlaylist(index)" aria-label="删除">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
                       <line x1="18" y1="6" x2="6" y2="18" />
@@ -193,7 +269,7 @@
                   </button>
                 </div>
               </div>
-            </div>
+            </TransitionGroup>
           </div>
 
           <!-- 底部操作栏 -->
@@ -205,7 +281,30 @@
               </svg>
               清空列表
             </button>
+            <span class="footer-tip">
+              音乐API来源于
+              <a class="tip-link" href="https://metingapi.nanorocky.top/" target="_blank">呆呆酪灰的 Meting-API</a>
+            </span>
             <span class="footer-hint">共 {{ playlist.length }} 首</span>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
+    <Teleport to="body">
+      <Transition name="dialog-pop-zoom">
+        <div v-if="dialog.visible" class="dialog-box" @click.stop>
+          <p class="dialog-message">{{ dialog.message }}</p>
+          <div class="dialog-actions">
+            <button
+                v-if="dialog.type === 'confirm'"
+                class="dialog-btn cancel"
+                @click="dialog.resolve(false)"
+            >取消</button>
+            <button
+                class="dialog-btn confirm"
+                @click="dialog.resolve(true)"
+                autofocus
+            >确定</button>
           </div>
         </div>
       </Transition>
@@ -214,16 +313,18 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, watch, computed } from 'vue'
+import { ref, onMounted, onBeforeUnmount, reactive, computed, watch } from 'vue'
 
 // ====== 常量 ======
 const STORAGE_KEY = 'music-list'
 const API_BASE = 'https://metingapi.nanorocky.top'
 const PAGE_SIZE = 5
+const generateId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`
 
 // ====== Props & Emits ======
 const props = defineProps({
-  currentIndex: { type: Number, required: true }
+  currentIndex: { type: Number, required: true },
+  isPlaying: { type: Boolean, default: false }
 })
 const emit = defineEmits(['close', 'switch-index', 'list-changed'])
 
@@ -231,6 +332,17 @@ const emit = defineEmits(['close', 'switch-index', 'list-changed'])
 const showModal = ref(true)
 const playlist = ref([])
 const playingIndex = ref(props.currentIndex)
+
+watch(() => props.currentIndex, (newVal) => {
+  playingIndex.value = newVal
+})
+
+// 监听列表长度变化，修复从 0→1 时 playingIndex 未更新的问题
+watch(() => playlist.value.length, (newLen, oldLen) => {
+  if (oldLen === 0 && newLen > 0 && playingIndex.value === -1) {
+    playingIndex.value = 0
+  }
+})
 
 // 搜索
 const selectedServer = ref('netease')
@@ -270,6 +382,10 @@ const loadPlaylist = () => {
     if (stored) {
       const parsed = JSON.parse(stored)
       if (Array.isArray(parsed)) {
+        // 兼容旧数据：没有 id 的项自动生成
+        parsed.forEach(item => {
+          if (!item.id) item.id = generateId()
+        })
         playlist.value = parsed
         return
       }
@@ -426,11 +542,12 @@ const addToPlaylist = async (item) => {
       p => p.title === item.name && p.author === item.artist
   )
   if (exists) {
-    alert('该歌曲已在播放列表中')
+    await showAlert('该歌曲已在播放列表中')
     return
   }
 
   const newMusic = {
+    id: generateId(),
     title: item.name,
     author: item.artist,
     tlink: item.pic || '',
@@ -449,7 +566,7 @@ const addToPlaylist = async (item) => {
   }
 
   if (!newMusic.flink) {
-    alert('无法获取该歌曲的播放链接，可能不可用')
+    await showAlert('无法获取该歌曲的播放链接，可能不可用')
     return
   }
 
@@ -473,11 +590,175 @@ const removeFromPlaylist = (index) => {
     playingIndex.value--
   }
 }
+// ----- 上移 -----
+const moveUp = (index) => {
+  if (index === 0) return
+
+  const currentTrack = playlist.value[playingIndex.value]
+  const trackId = currentTrack ? `${currentTrack.title}|||${currentTrack.author}` : null
+
+  const newList = [...playlist.value]
+  const [item] = newList.splice(index, 1)
+  newList.splice(index - 1, 0, item)
+  playlist.value = newList
+  savePlaylist(newList)
+
+  if (trackId) {
+    const newIndex = newList.findIndex(item => `${item.title}|||${item.author}` === trackId)
+    if (newIndex !== -1) {
+      playingIndex.value = newIndex
+    }
+  }
+
+  // 只通知列表变化，不触发切换歌曲
+  notifyListChanged()
+}
+
+// ----- 下移 -----
+const moveDown = (index) => {
+  if (index === playlist.value.length - 1) return
+
+  const currentTrack = playlist.value[playingIndex.value]
+  const trackId = currentTrack ? `${currentTrack.title}|||${currentTrack.author}` : null
+
+  const newList = [...playlist.value]
+  const [item] = newList.splice(index, 1)
+  newList.splice(index + 1, 0, item)
+  playlist.value = newList
+  savePlaylist(newList)
+
+  if (trackId) {
+    const newIndex = newList.findIndex(item => `${item.title}|||${item.author}` === trackId)
+    if (newIndex !== -1) {
+      playingIndex.value = newIndex
+    }
+  }
+
+  notifyListChanged()
+}
+
+// ----- 移到最前 -----
+const moveToTop = (index) => {
+  if (index === 0) return
+
+  const currentTrack = playlist.value[playingIndex.value]
+  const trackId = currentTrack ? `${currentTrack.title}|||${currentTrack.author}` : null
+
+  const newList = [...playlist.value]
+  const [item] = newList.splice(index, 1)
+  newList.unshift(item)
+  playlist.value = newList
+  savePlaylist(newList)
+
+  if (trackId) {
+    const newIndex = newList.findIndex(item => `${item.title}|||${item.author}` === trackId)
+    if (newIndex !== -1) {
+      playingIndex.value = newIndex
+    }
+  }
+
+  notifyListChanged()
+}
+
+// ----- 移到最后 -----
+const moveToBottom = (index) => {
+  if (index === playlist.value.length - 1) return
+
+  const currentTrack = playlist.value[playingIndex.value]
+  const trackId = currentTrack ? `${currentTrack.title}|||${currentTrack.author}` : null
+
+  const newList = [...playlist.value]
+  const [item] = newList.splice(index, 1)
+  newList.push(item)
+  playlist.value = newList
+  savePlaylist(newList)
+
+  if (trackId) {
+    const newIndex = newList.findIndex(item => `${item.title}|||${item.author}` === trackId)
+    if (newIndex !== -1) {
+      playingIndex.value = newIndex
+    }
+  }
+
+  notifyListChanged()
+}
+
+// ----- 下载音乐文件 -----
+const downloadMusic = async (index) => {
+  const audio = playlist.value[index]
+  if (!audio.flink) {
+    await showAlert('该歌曲没有可用的播放链接')
+    return
+  }
+  try {
+    // 1. 获取文件（跨域资源用 fetch + blob）
+    const response = await fetch(audio.flink)
+    if (!response.ok) throw new Error('下载失败')
+    const blob = await response.blob()
+
+    // 2. 从 URL 或标题中提取扩展名（如果没有则默认 .mp3）
+    const url = audio.flink
+    let ext = url.split('.').pop().split('?')[0] || 'mp3'
+    if (!['mp3', 'm4a', 'flac', 'wav', 'aac'].includes(ext)) ext = 'mp3'
+
+    // 3. 构建下载文件名
+    const fileName = `${audio.title} - ${audio.author}.${ext}`
+
+    // 4. 触发下载
+    await showAlert('已尝试发起下载，请稍等')
+    const link = document.createElement('a')
+    link.href = URL.createObjectURL(blob)
+    link.download = fileName
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+
+    // 5. 释放内存
+    setTimeout(() => URL.revokeObjectURL(link.href), 1000)
+  } catch (err) {
+    console.error('下载音乐失败:', err)
+    await showAlert('下载音乐失败，请检查网络或链接是否有效')
+  }
+}
+
+// ----- 下载封面图片 -----
+const downloadImage = async (index) => {
+  const audio = playlist.value[index]
+  if (!audio.tlink) {
+    await showAlert('该歌曲没有封面图片')
+    return
+  }
+  try {
+    // 同样 fetch + blob
+    const response = await fetch(audio.tlink)
+    if (!response.ok) throw new Error('图片下载失败')
+    const blob = await response.blob()
+
+    // 图片扩展名（从 URL 或 content-type 推断）
+    let ext = audio.tlink.split('.').pop().split('?')[0] || 'jpg'
+    if (!['jpg', 'jpeg', 'png', 'webp', 'gif'].includes(ext)) ext = 'jpg'
+
+    const fileName = `${audio.title} - cover.${ext}`
+
+    await showAlert('已发起下载，请稍等')
+    const link = document.createElement('a')
+    link.href = URL.createObjectURL(blob)
+    link.download = fileName
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+
+    setTimeout(() => URL.revokeObjectURL(link.href), 1000)
+  } catch (err) {
+    console.error('下载封面失败:', err)
+    await showAlert('下载封面失败。QQ音乐来源封面咱不支持下载')
+  }
+}
 
 // 清空
-const clearPlaylist = () => {
+const clearPlaylist = async () => {
   if (playlist.value.length === 0) return
-  if (confirm('确定要清空播放列表吗？')) {
+  if (await showConfirm('确定要清空播放列表吗？')) {
     playlist.value = []
     savePlaylist([])
     playingIndex.value = -1
@@ -485,12 +766,17 @@ const clearPlaylist = () => {
   }
 }
 
-// 播放
+// 播放p
 const handlePlayClick = (index) => {
-  playingIndex.value = index
-  emit('switch-index', index)
+  if (index === playingIndex.value && props.isPlaying) {
+    // 当前正在播放 -> 暂停
+    emit('pause')
+  } else {
+    // 切换歌曲（或暂停状态下的同一首 -> 恢复播放）
+    playingIndex.value = index
+    emit('switch-index', index)   // 父组件收到后应开始播放
+  }
 }
-
 // 关闭
 const closeModal = () => {
   showModal.value = false
@@ -498,6 +784,37 @@ const closeModal = () => {
 
 const onAfterLeave = () => {
   emit('close')
+}
+
+const dialog = reactive({
+  visible: false,
+  message: '',
+  type: 'alert', // 'alert' | 'confirm'
+  resolve: null,
+})
+
+const showAlert = (message) => {
+  return new Promise((resolve) => {
+    dialog.message = message
+    dialog.type = 'alert'
+    dialog.resolve = (value) => {
+      dialog.visible = false
+      resolve(value)
+    }
+    dialog.visible = true
+  })
+}
+
+const showConfirm = (message) => {
+  return new Promise((resolve) => {
+    dialog.message = message
+    dialog.type = 'confirm'
+    dialog.resolve = (value) => {
+      dialog.visible = false
+      resolve(value)
+    }
+    dialog.visible = true
+  })
 }
 
 // ====== 生命周期 ======
@@ -509,12 +826,10 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   document.removeEventListener('mousedown', handleClickOutside)
+  if (dialog.visible) {
+    dialog.visible = false
+  }
 })
-
-watch(
-    () => props.currentIndex,
-    (val) => { playingIndex.value = val }
-)
 </script>
 
 <!--suppress CssUnresolvedCustomProperty -->
@@ -528,7 +843,7 @@ watch(
   width: 100vw;
   height: 100vh;
   background: rgba(0, 0, 0, 0.45);
-  backdrop-filter: blur(12px);
+  backdrop-filter: var(--zm-backdrop-blur-medium);
   -webkit-backdrop-filter: blur(12px);
   z-index: 9999;
 }
@@ -543,7 +858,7 @@ watch(
   transform: translate(-50%, -50%);
   width: 100%;
   max-width: 760px;
-  max-height: 92vh;
+  height: 90vh;
   background: var(--vp-c-bg-elv);
   backdrop-filter: var(--zm-backdrop-blur-medium);
   -webkit-backdrop-filter: var(--zm-backdrop-blur-medium);
@@ -556,6 +871,7 @@ watch(
   z-index: 10000;
   color: var(--vp-c-text-1);
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  transition: all 0.5s ease;
 }
 
 /* ============================================================
@@ -1043,6 +1359,7 @@ watch(
 }
 
 .playlist-scroll {
+  position: relative;
   flex: 1;
   overflow-y: auto;
   display: flex;
@@ -1088,11 +1405,13 @@ watch(
 
 /* ---- 空状态 ---- */
 .empty-state {
+  width: 100%;  /* 让容器撑满父级宽度 */
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 20px 20px 30px;
+  padding: 20px 20px 80px;
   color: var(--vp-c-text-1);
   text-align: center;
 }
@@ -1124,10 +1443,11 @@ watch(
   align-items: center;
   gap: 14px;
   padding: 8px 12px;
-  border-radius: 24px;
+  border-radius: 16px;
   background: rgba(255, 255, 255, 0.01);
   border: 3px solid transparent;
   transition: all 0.25s ease;
+  z-index: 2;
 }
 
 @media (min-width: 960px){
@@ -1192,6 +1512,14 @@ watch(
   .playlist-actions:hover {
     transform: scale(1.1);
   }
+  .btn-download-music:hover {
+    color: blueviolet;
+    background: rgba(189, 52, 254, 0.15);
+  }
+  .btn-download-image:hover {
+    color: #59cd5e;
+    background: rgba(129, 199, 132, 0.15);
+  }
 }
 
 /* 播放 / 删除按钮统一玻璃背景 */
@@ -1220,15 +1548,28 @@ watch(
   color: var(--vp-c-text-1);
 }
 
+.scale svg{
+  height: 14px !important;
+}
+
 @media (min-width: 960px){
   .btn-play:hover {
     color: #ffcd7b;
     background: rgba(255, 205, 123, 0.15);
   }
+  .btn-move:hover {
+    color: #3a8ee6;
+    fill: #3a8ee6;
+    background: rgb(74 185 253 / 0.3);
+  }
 }
 
 .playlist-item.playing .btn-play {
   color: #ffcd7b;
+}
+
+.load-more-trigger{
+  margin: 0 auto;
 }
 
 @media (min-width: 960px){
@@ -1290,10 +1631,87 @@ watch(
   font-weight: 1000;
 }
 
+.footer-tip{
+  color: var(--vp-c-text-2);
+  font-weight: 1000;
+  font-size: 13px;
+}
+
+.tip-link {
+  color: var(--vp-c-brand-1);
+}
+
+/* 弹窗主体 — 居中固定，层级更高 */
+.dialog-box {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80vw;
+  max-width: 320px;
+  padding: 20px 10px 10px;
+  background: var(--zm-background-high); /* 半透明白底 */
+  border: 1px solid rgba(255, 255, 255, 0.6); /* 玻璃边缘光晕 */
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2); /* 一点悬浮阴影 */
+  border-radius: 32px;
+  text-align: center;
+  z-index: 99999;               /* 高于遮罩 */
+  /* 弹窗内部内容样式不变 */
+}
+
+.dialog-message{
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.dialog-actions{
+  display: flex;
+  gap: 10px
+}
+
+.dialog-btn{
+  font-size: 15px;
+  font-weight: bold;
+  padding: 8px;
+  flex: 1;
+  border-radius: 50px;
+  transition: 0.2s ease;
+}
+@media (min-width: 960px){
+  .dialog-btn:hover{
+    transform: scale(1.06);
+  }
+}
+
+.dialog-btn:active{
+  transform: scale(0.9);
+}
+
+.dialog-btn.cancel{
+  background: var(--zm-ghost-light-dark);
+  box-shadow: 0 0 16px var(--zm-ghost-light-dark);
+}
+
+.dialog-btn.confirm{
+  color: white;
+  background: rgba(255, 205, 123, 1);
+  box-shadow: 0 0 16px rgba(255, 205, 123, 1);
+}
+
+.dialog-active{
+  transform: translate(-50%, -50%) !important;
+  filter: blur(2px);
+}
+
 /* ============================================================
    响应式（仅调整尺寸，背景已统一）
    ============================================================ */
 @media (max-width: 768px) {
+  .modal-overlay{
+    backdrop-filter: none;
+  }
+
   .modal-window {
     width: 94%;
     max-height: 96vh;
@@ -1353,9 +1771,8 @@ watch(
     padding: 0 16px;
     font-size: 13px;
   }
-
   .search-results {
-    max-height: 140px;
+    max-height: 25vh;
     margin-top: 10px;
   }
   .result-item {
@@ -1391,10 +1808,6 @@ watch(
     padding: 6px 10px;
     gap: 10px;
   }
-  .playlist-cover {
-    width: 34px;
-    height: 34px;
-  }
   .playlist-name {
     font-size: 13px;
   }
@@ -1424,13 +1837,18 @@ watch(
   .footer-hint {
     font-size: 11px;
   }
-
+  .scale,.btn-download-image,.btn-download-music {
+    display: none !important;
+  }
   .dropdown-menu {
     min-width: 140px;
   }
   .dropdown-item {
     font-size: 12px;
     padding: 8px 14px;
+  }
+  .footer-tip {
+    font-size: 9px;
   }
 }
 </style>
@@ -1457,6 +1875,50 @@ watch(
 
 .modal-3d-enter-active,
 .modal-3d-leave-active{
-  transition: all 0.7s cubic-bezier(0.29, 0.00, 0.00, 1.00) !important;
+  transition: all 0.7s ease !important;
+}
+/* 弹窗主体动画：缩放 + 轻微上移 */
+.dialog-pop-zoom-enter-active,
+.dialog-pop-zoom-leave-active {
+  transition: all 0.2s ease !important;
+}
+.dialog-pop-zoom-enter-from,
+.dialog-pop-zoom-leave-to {
+  opacity: 0;
+  transform: translate(-50%) !important;
+}
+
+/* ---------- 列表过渡动画 ---------- */
+.list-move {
+  transition: transform 0.3s ease;
+}
+
+.list-enter-active,
+.list-leave-active {
+  transition: opacity 0.3s ease, transform 0.3s ease, filter 0.3s ease;
+}
+
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: scale(0.9);
+  filter: blur(2px);
+}
+
+/* 删除时固定位置防止其他项抖动 */
+.list-leave-active {
+  position: absolute;
+  width: calc(100% - 4px);
+}
+
+@media (max-width: 768px) {
+  .modal-3d-enter-active,
+  .modal-3d-leave-active{
+    transition: all 0.3s ease !important;
+  }
+  .modal-3d-leave-to,
+  .modal-3d-enter-from {
+    transform: translate(-50%) !important;
+  }
 }
 </style>
