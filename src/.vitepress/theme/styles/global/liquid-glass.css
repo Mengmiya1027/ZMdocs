@@ -128,7 +128,7 @@
    玻璃视觉（背景 + 模糊）放在 ::before 上，opacity 永远为 1，只动模糊半径（结霜），
    因此即使文字层做淡入也不会让玻璃变白（见 contentTransition.ts 的方案说明）。
    元素本体透明，仅作定位容器 + 文字/边框的承载层。 */
-.content-container:has(> .main) :is(p, h1, h2, h3, h4, h5, h6, ul) {
+.content-container:has(> .main) :is(p, h1, h2, h3, h4, h5, h6, ul, ol):not(.VPLastUpdated):not(:is(.custom-block *)) {
     position: relative;        /* 定位上下文，承载 ::before */
     z-index: 0;                 /* 建立层叠上下文，把 ::before 的 z-index:-1 收在卡片内部 */
     background: transparent;    /* 白底移到 ::before，本体透明 */
@@ -144,7 +144,7 @@
 /* 玻璃层：背景半透明 + 背景模糊，铺满卡片。opacity 恒为 1，永远不参与任何淡入淡出，
    因此不会被祖先的 opacity 动画隔离 → 不会变白。模糊半径由 contentTransition.ts 做
    blur(0px)→静止值 的“结霜”渐入。 */
-.content-container:has(> .main) :is(p, h1, h2, h3, h4, h5, h6, ul)::before {
+.content-container:has(> .main) :is(p, h1, h2, h3, h4, h5, h6, ul, ol):not(.VPLastUpdated):not(:is(.custom-block *))::before {
     content: "";
     position: absolute;
     inset: 0;

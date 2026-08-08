@@ -112,11 +112,25 @@ function setCardContent(c: HTMLElement, l: LrcLine) {
   }
 }
 
+// 推入动画结束后复位：解散合成层 + 撤掉 will-change，让 Windows 分数缩放下
+// 文字重新按文档流栅格化、恢复 Cleartype（解决歌词卡文字模糊）。
+// 仅对"当前静止卡"生效；正在退场/打断的卡不复位，让其自然移除。
+function onSettle(e: TransitionEvent) {
+  if (e.propertyName !== 'transform') return
+  const c = e.currentTarget as HTMLElement
+  if (c !== restCard) return
+  c.style.transform = '' // 回落到 none，文字脱离合成层
+  c.style.willChange = 'auto'
+  c.removeEventListener('transitionend', onSettle)
+}
+
 // 新建卡片，初始为"淡出态"，随后移除该类触发淡入
 function mkCard(l: LrcLine): HTMLElement {
   const c = document.createElement('div')
   c.className = 'lyric-card lyric-card--hidden'
   setCardContent(c, l)
+  c.style.willChange = 'transform' // 动画期临时提升合成层，静止时由 onSettle 撤掉
+  c.addEventListener('transitionend', onSettle)
   wrap.value?.appendChild(c)
   return c
 }
@@ -131,7 +145,8 @@ function dismiss(c: HTMLElement | null, slide: boolean) {
   }, MOVE + 80)
 }
 
-// 打断退场：快速向右下轻推 + 轻微缩小 + 淡出（沿用 --hidden 的玻璃不发白方案，过渡更短）
+// 打断退场：快速向右下轻推 + 轻微缩小 + 淡出（沿用 --hidden 的玻璃不发白方案，过渡更短）。
+// 此处恢复 transform(含 scale)，打断瞬间文字会轻微模糊——用户接受该短暂状态以保留缩小手感。
 function interruptOut(c: HTMLElement | null) {
   if (!c || c.classList.contains('lyric-card--interrupt')) return
   c.classList.add('lyric-card--interrupt')
@@ -344,13 +359,12 @@ watch(sharedTime, (t) => {
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   color: var(--vp-c-text-1);
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 500;
   line-height: 1.5;
   transition: transform var(--dur, 0.6s) cubic-bezier(0.22, 0.61, 0.36, 1),
     color var(--dur, 0.6s) ease, border-color var(--dur, 0.6s) ease,
     box-shadow var(--dur, 0.6s) ease;
-  will-change: transform;
 }
 
 .lyric-stage :deep(.lyric-card)::before {
@@ -413,7 +427,7 @@ watch(sharedTime, (t) => {
 
 .lyric-stage :deep(.lyric-trans) {
   margin-top: 4px;
-  font-size: 12.5px;
+  font-size: 13.5px;
   font-weight: 400;
   color: var(--vp-c-text-2);
   transition: color 0.46s ease;

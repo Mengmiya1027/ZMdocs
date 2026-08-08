@@ -37,8 +37,7 @@ const handleLinkClick = (e: MouseEvent) => {
 </script>
 
 <template>
-  <ClientOnly>
-    <div class="linkcard">
+  <div class="linkcard">
       <a
           :href="props.link"
           :target="props.target || defaultProps.target"
@@ -64,7 +63,6 @@ const handleLinkClick = (e: MouseEvent) => {
         </div>
       </a>
     </div>
-  </ClientOnly>
 </template>
 
 <!--suppress CssUnresolvedCustomProperty -->

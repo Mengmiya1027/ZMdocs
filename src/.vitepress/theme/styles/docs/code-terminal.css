@@ -1,0 +1,93 @@
+/* ── 白色玻璃终端（与全站液态玻璃统一，明暗跟随站点主题） ── */
+.glass-terminal {
+  margin: 0.8rem 0;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+  position: relative;
+}
+
+html.dark .glass-terminal {
+  background: rgba(30, 30, 46, 0.45);
+  border-color: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+}
+
+.glass-terminal .terminal-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 1rem;
+  background: rgba(255, 255, 255, 0.45);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+html.dark .glass-terminal .terminal-header {
+  background: rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.glass-terminal .terminal-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.glass-terminal .terminal-dot.red {
+  background: #ff5f56;
+}
+
+.glass-terminal .terminal-dot.yellow {
+  background: #ffbd2e;
+}
+
+.glass-terminal .terminal-dot.green {
+  background: #27c93f;
+}
+
+.glass-terminal .terminal-title {
+  margin-left: 0.4rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-weight: 600;
+  flex: 1;
+  color: rgba(0, 0, 0, 0.4);
+}
+
+html.dark .glass-terminal .terminal-title {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* 代码区：透出玻璃底，去掉 VitePress 默认代码块背景/边框，避免双层黑块。
+   注意 VitePress 在 .language-xxx 包裹层上设了 --vp-code-block-bg（暗色近黑），
+   只透明化 pre 不够，必须把外层 .language-* 一起透明，否则暗色模式露出黑块。 */
+.glass-terminal div[class*="language-"],
+.glass-terminal pre.shiki {
+  background: transparent !important;
+  border: none !important;
+}
+
+.glass-terminal pre {
+  margin: 0;
+  padding: 1rem 1.2rem;
+  overflow-x: auto;
+}
+
+.glass-terminal code {
+  font-family: 'JetBrains Mono NL', 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  font-size: 0.85rem;
+  line-height: 1.7;
+  background: transparent !important;
+  padding: 0 !important;
+}
+
+/* 复用 VitePress 自带复制按钮；隐藏其默认语言标签，避免与标题栏重复 */
+.glass-terminal .lang {
+  display: none;
+}

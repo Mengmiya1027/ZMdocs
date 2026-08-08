@@ -9,6 +9,7 @@
 @import "./global/search.css";
 @import "./docs/sidebar.css";
 @import "./docs/custom-block.css";
+@import "./docs/code-terminal.css";
 @import "./docs/document.css";
 @import "./docs/outline-scroll.css";
 @import "./docs/content-transition.css";
