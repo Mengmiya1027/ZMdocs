@@ -444,7 +444,7 @@ const handleSearch = async () => {
   searchResults.value = []
 
   try {
-    const url = `${API_BASE}/?server=${selectedServer.value}&type=search&id=0&keyword=${encodeURIComponent(keyword)}&br=exhigh`
+    const url = `${API_BASE}/?server=${selectedServer.value}&type=search&id=0&keyword=${encodeURIComponent(keyword)}&br=hires`
     const res = await fetch(url)
     if (!res.ok) throw new Error('搜索失败')
     const data = await res.json()
@@ -556,7 +556,7 @@ const addToPlaylist = async (item) => {
 
   if (!newMusic.flink && item.id) {
     try {
-      const url = `${API_BASE}/?server=${selectedServer.value}&type=url&id=${item.id}`
+      const url = `${API_BASE}/?server=${selectedServer.value}&type=url&id=${item.id}&br=hires`
       const res = await fetch(url)
       if (res.ok) {
         const data = await res.json()

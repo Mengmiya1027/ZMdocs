@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>歌词卡 Demo · 稚梦（修复：再快都有动画）</title>
+<style>
+  :root{
+    --text-1: #f5f7fa;
+    --text-2: rgba(245,247,250,0.72);
+    --glass-bg: rgba(28,30,42,0.42);
+    --glass-blur: blur(16px) saturate(150%);
+  }
+  *{ box-sizing: border-box; }
+  html,body{ height:100%; margin:0; }
+  body{
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    color: var(--text-1);
+    background:
+      radial-gradient(900px 600px at 12% 18%, #6d28d9 0%, transparent 55%),
+      radial-gradient(800px 600px at 88% 22%, #db2777 0%, transparent 55%),
+      radial-gradient(900px 700px at 50% 100%, #0ea5e9 0%, transparent 55%),
+      linear-gradient(135deg, #0b1020 0%, #1a1130 100%);
+    overflow: hidden;
+    position: relative;
+  }
+  .blob{ position:fixed; border-radius:50%; filter: blur(40px); opacity:.55; z-index:0; }
+  .blob.a{ width:240px;height:240px;background:#f59e0b; top:30%; left:20%; animation:float 9s ease-in-out infinite; }
+  .blob.b{ width:200px;height:200px;background:#22d3ee; top:55%; left:65%; animation:float 11s ease-in-out infinite reverse; }
+  @keyframes float{ 0%,100%{transform:translate(0,0)} 50%{transform:translate(30px,-24px)} }
+
+  /* ===== 歌词卡（复刻 LyricCard.vue，已修复再快都有动画） ===== */
+  .lyric-widget{
+    position: fixed;
+    top: calc(var(--vp-nav-height, 64px) + 24px);
+    right: 24px;
+    width: 360px;
+    z-index: 25;
+    pointer-events: none;
+  }
+  .lyric-stage{ position: relative; width:100%; min-height:130px; }
+  .lyric-card{
+    position: absolute; top:0; right:0;
+    width: max-content; min-width: 88px; max-width: 100%;
+    min-height: 52px; padding: 12px 16px;
+    text-align: left; z-index: 0; background: transparent;
+    border: 1px solid rgba(255,255,255,0.3); border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    color: var(--text-1);
+    font-size: 14px; font-weight: 500; line-height: 1.5;
+    transition: transform var(--dur,0.6s) cubic-bezier(0.22,0.61,0.36,1),
+                color var(--dur,0.6s) ease, border-color var(--dur,0.6s) ease, box-shadow var(--dur,0.6s) ease;
+    will-change: transform;
+  }
+  .lyric-card::before{
+    content:''; position:absolute; inset:0; z-index:-1; border-radius:inherit;
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+    transition: background-color var(--dur,0.6s) ease, backdrop-filter var(--dur,0.6s) ease, -webkit-backdrop-filter var(--dur,0.6s) ease;
+  }
+  .lyric-card--hidden{ color: transparent; border-color: rgba(255,255,255,0); box-shadow: 0 8px 32px rgba(0,0,0,0); }
+  .lyric-card--hidden::before{ background-color: transparent; backdrop-filter: blur(0px) saturate(100%); -webkit-backdrop-filter: blur(0px) saturate(100%); }
+  .lyric-card--interrupt{ transition: transform 0.24s ease, color 0.24s ease, border-color 0.24s ease, box-shadow 0.24s ease; }
+  .lyric-card--interrupt::before{ transition: background-color 0.24s ease, backdrop-filter 0.24s ease, -webkit-backdrop-filter 0.24s ease; }
+  .lyric-card--fast{ transition: transform 0.22s ease, color 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease; }
+  .lyric-card--fast::before{ transition: background-color 0.22s ease, backdrop-filter 0.22s ease, -webkit-backdrop-filter 0.22s ease; }
+  .lyric-line{ overflow-wrap: anywhere; }
+  .lyric-trans{ margin-top:4px; font-size:12.5px; font-weight:400; color:var(--text-2); transition: color 0.46s ease; overflow-wrap: anywhere; }
+  .lyric-card--hidden .lyric-trans{ color: transparent; }
+
+  /* ===== 控制面板 ===== */
+  .panel{
+    position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%);
+    z-index: 30; width: min(700px, 94vw);
+    padding: 16px 18px; border-radius: 18px;
+    background: rgba(20,22,34,0.55); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+    border: 1px solid rgba(255,255,255,0.18);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+  }
+  .panel h1{ font-size:15px; margin:0 0 2px; font-weight:600; }
+  .panel .sub{ font-size:12px; color:var(--text-2); margin:0 0 12px; }
+  .row{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+  button{
+    font: inherit; font-size:13px; color:var(--text-1); cursor:pointer;
+    padding:8px 14px; border-radius:10px; border:1px solid rgba(255,255,255,0.22);
+    background: rgba(255,255,255,0.08); transition: background .15s ease, transform .05s ease;
+  }
+  button:hover{ background: rgba(255,255,255,0.16); }
+  button:active{ transform: translateY(1px); }
+  button.primary{ background: linear-gradient(135deg,#7c3aed,#db2777); border-color:transparent; }
+  .slider-wrap{ flex:1 1 220px; display:flex; align-items:center; gap:10px; min-width:200px; }
+  input[type=range]{ flex:1; accent-color:#db2777; }
+  .time{ font-variant-numeric: tabular-nums; font-size:12px; color:var(--text-2); min-width:84px; }
+  .now{ margin-top:10px; font-size:12px; color:var(--text-2); }
+  .now b{ color:var(--text-1); font-weight:600; }
+  .hint{ position:fixed; top:18px; left:18px; z-index:5; font-size:12px; color:var(--text-2);
+         background:rgba(0,0,0,.25); padding:8px 12px; border-radius:10px; max-width:320px; line-height:1.6;}
+  @media (max-width: 960px){ .lyric-widget{ display:none; } }
+</style>
+</head>
+<body>
+  <div class="blob a"></div>
+  <div class="blob b"></div>
+
+  <div class="hint">
+    右上角是歌词卡。<br/>
+    <b>每一行都有完整「推入 + 推出」</b>，无原地淡入/无动画降级。<br/>
+    速度自适应：慢歌慢（0.6s）、快歌词快（低至 0.16s）。<br/>
+    ▶ 播放：逐行对角推入 + 旧卡同帧滑出<br/>
+    ⏸ 暂停：打断退场　⏭ 切歌：旧卡打断退场<br/>
+    ⏩/拖进度条：跳行 → 快速过渡<br/>
+    第 2 首每行 0.6s、第 3 首「极速说唱」每行 0.3s，压力测试再快也动画。
+  </div>
+
+  <div class="lyric-widget"><div class="lyric-stage" id="stage"></div></div>
+
+  <div class="panel">
+    <h1>歌词卡 Demo（修复版）</h1>
+    <p class="sub">复刻 LyricCard.vue，去掉了吞掉快速行动画的 busy 锁</p>
+    <div class="row">
+      <button id="play" class="primary">▶ 播放</button>
+      <button id="stop">⏹ 停止</button>
+      <button id="prev">⏮ 上一首</button>
+      <button id="next">⏭ 下一首</button>
+      <button id="ff">⏩ 快进 5s</button>
+      <span class="slider-wrap">
+        <input type="range" id="seek" min="0" max="50" step="0.1" value="0" />
+        <span class="time" id="time">00:00 / 00:00</span>
+      </span>
+    </div>
+    <div class="now">当前：<b id="songName">—</b> · 状态：<b id="state">未播放</b> · 当前行：<b id="lineNo">-</b></div>
+  </div>
+
+<script>
+/* ============ 演示数据 ============ */
+const SONGS = [
+  {
+    id:'s1', title:'夜空中最亮的星', author:'逃跑计划',
+    lines:[
+      {time:2,  text:'夜空中最亮的星', trans:'Brightest star in the night sky'},
+      {time:8,  text:'能否听清',       trans:'Can you hear'},
+      {time:13, text:'那仰望的人',     trans:'That person looking up'},
+      {time:18, text:'心底的孤独和叹息', trans:'The loneliness and sighs in their heart'},
+      {time:24, text:'夜空中最亮的星', trans:'Brightest star in the night sky'},
+      {time:30, text:'能否记起',       trans:'Can you remember'},
+      {time:35, text:'曾与我同行',     trans:'Once walked with me'},
+      {time:40, text:'消失在风里的身影', trans:'The figure vanished in the wind'},
+      {time:47, text:''}
+    ]
+  },
+  {
+    id:'s2', title:'说唱（每行0.6s）', author:'—',
+    lines:[
+      {time:1,   text:'Yo'},
+      {time:1.6, text:'速度拉满',   trans:'Max speed'},
+      {time:2.2, text:'歌词像子弹', trans:'Lyrics like bullets'},
+      {time:2.8, text:'一句接一句', trans:'Line after line'},
+      {time:3.4, text:'不停歇',     trans:'Non-stop'},
+      {time:4.0, text:'这就是快嘴', trans:'This is fast rap'},
+      {time:4.6, text:'别眨眼',     trans:"Don't blink"},
+      {time:5.2, text:'demo 演示',  trans:'Demo showing'},
+      {time:5.8, text:'snap 动画',  trans:'Snap animation'},
+      {time:6.4, text:'搞定',       trans:'Done'},
+      {time:9,   text:''}
+    ]
+  },
+  {
+    id:'s3', title:'极速说唱（每行0.3s，压力测试）', author:'—',
+    lines:[
+      {time:1.0,  text:'一'},
+      {time:1.3,  text:'二'},
+      {time:1.6,  text:'三'},
+      {time:1.9,  text:'四'},
+      {time:2.2,  text:'五'},
+      {time:2.5,  text:'六'},
+      {time:2.8,  text:'七'},
+      {time:3.1,  text:'八'},
+      {time:3.4,  text:'九'},
+      {time:3.7,  text:'十'},
+      {time:4.0,  text:'百'},
+      {time:4.3,  text:'千'},
+      {time:4.6,  text:'万'},
+      {time:4.9,  text:'收'},
+      {time:7,    text:''}
+    ]
+  }
+];
+
+/* ============ 复刻 LyricCard.vue 的核心逻辑（修复版） ============ */
+const GAP = 8, MOVE = 600, FAST = 240;
+const wrap = document.getElementById('stage');
+let restCard = null;
+let lines = [];
+let activeIndex = -1;
+let playing = false;
+let currentTime = 0;
+let currentSong = null;
+let lastTime = 0;
+let lastReal = performance.now();
+
+function mkCard(l){
+  const c = document.createElement('div');
+  c.className = 'lyric-card lyric-card--hidden';
+  c.dataset.key = (l.text||'') + '|' + (l.trans||'');
+  if(l.text){ const m=document.createElement('div'); m.className='lyric-line'; m.textContent=l.text; c.appendChild(m); }
+  if(l.trans){ const t=document.createElement('div'); t.className='lyric-trans'; t.textContent=l.trans; c.appendChild(t); }
+  wrap.appendChild(c);
+  return c;
+}
+function reveal(c){ void c.offsetWidth; requestAnimationFrame(()=>{ if(c.parentNode) c.classList.remove('lyric-card--hidden'); }); }
+function dismiss(c, slide){
+  if(!c) return;
+  c.classList.add('lyric-card--hidden');
+  if(slide) c.style.transform = 'translate(160%,0)';
+  setTimeout(()=>{ if(c.parentNode) c.remove(); }, MOVE + 80);
+}
+function hideRest(){ if(restCard){ const c=restCard; restCard=null; dismiss(c,false); } }
+// 推入一张静止卡（dur 自适应时长，首行也走推入）
+function showRest(l, dur=0.6){
+  [...wrap.children].forEach(c=>c.remove());
+  restCard=null;
+  const c = mkCard(l);
+  c.style.setProperty('--dur', dur+'s');
+  c.style.transform = 'translate(160%, 0)';
+  void c.offsetWidth;
+  requestAnimationFrame(()=>{ if(c.parentNode){ c.classList.remove('lyric-card--hidden'); c.style.transform='translate(0,0)'; } });
+  restCard = c;
+}
+// 打断退场：向右下轻推 + 缩小 + 淡出
+function interruptOut(c){
+  if(!c || c.classList.contains('lyric-card--interrupt')) return;
+  c.classList.add('lyric-card--interrupt');
+  c.style.transform = 'translate(72%, 8px) scale(0.93)';
+  setTimeout(()=>{ if(c.parentNode) c.remove(); }, FAST + 120);
+}
+function clearCards(){ [...wrap.children].forEach(c=>c.remove()); restCard=null; }
+
+// 核心：每一行都有完整「对角推入 + 同帧滑出」接力，无原地淡入/无动画降级。
+// 时长自适应：慢歌慢、快歌词快（按行间隔缩放，下限 0.16s 保可见）。
+function animateTo(l, dur=0.6){
+  if(!l.text) return hideRest();
+  const k = (l.text||'') + '|' + (l.trans||'');
+  if(restCard && restCard.dataset.key === k) return; // 同一行不重复
+
+  // 清理堆积的退场旧卡，最多保留 2 张正在退场的，避免节点无限增长
+  const exiting = [...wrap.children].filter(c => c !== restCard);
+  for(let i=0; i<exiting.length-2; i++) exiting[i].remove();
+
+  const old = restCard;
+  if(!old) return showRest(l, dur); // 当前无卡 -> 推入
+
+  // 新卡从右下方斜向左上推入，旧卡同帧向右滑出
+  const row = old.offsetHeight + GAP;
+  const n = mkCard(l);
+  n.style.setProperty('--dur', dur+'s');
+  n.style.transform = `translate(160%, ${row}px)`;
+  void n.offsetWidth;
+  requestAnimationFrame(()=>{
+    if(n.parentNode){ n.classList.remove('lyric-card--hidden'); n.style.transform='translate(0,0)'; }
+    if(old){ old.style.setProperty('--dur', dur+'s'); dismiss(old, true); } // 同帧滑出
+  });
+  restCard = n;
+}
+
+function songDuration(){ return lines.length ? lines[lines.length-1].time + 4 : 50; }
+function computeActive(t){
+  let idx = -1;
+  for(let k=0;k<lines.length;k++){ if(lines[k].time <= t + 0.15) idx=k; else break; }
+  return idx;
+}
+
+/* ============ 进度 / 状态联动 ============ */
+function onTimeUpdate(){
+  if(!lines.length) return;
+  const i = computeActive(currentTime);
+  if(i === activeIndex) return;
+  const prevActive = activeIndex;
+  const gap = (i >= 0 && prevActive >= 0 && lines[i] && lines[prevActive])
+    ? lines[i].time - lines[prevActive].time : 999;
+  // 快进/拖进度条/跳行过多 -> 固定短时长；否则按行间隔自适应（慢歌慢、快歌词快）
+  const seekJump = (i - prevActive) > 1 || gap < -0.05 || gap > 1.2;
+  const dur = seekJump ? 0.26 : Math.min(0.6, Math.max(0.16, gap * 0.75));
+  activeIndex = i;
+  if(i < 0) return hideRest();
+  animateTo(lines[i], dur);
+}
+
+/* ============ 控制 ============ */
+function switchSong(s){
+  interruptOut(restCard);
+  restCard = null;
+  currentSong = s;
+  lines = s.lines;
+  activeIndex = -1;
+  currentTime = 0;
+  lastTime = 0;
+  seek.max = songDuration();
+  songName.textContent = s.title + ' — ' + s.author;
+  updateTimeLabel();
+}
+function setPlaying(p){
+  playing = p;
+  play.textContent = p ? '⏸ 暂停' : '▶ 播放';
+  state.textContent = p ? '播放中' : '已暂停';
+  if(p){
+    if(activeIndex >= 0 && lines[activeIndex] && lines[activeIndex].text) showRest(lines[activeIndex], true);
+  } else {
+    interruptOut(restCard); restCard = null;
+  }
+}
+
+const play = document.getElementById('play');
+const stop = document.getElementById('stop');
+const prev = document.getElementById('prev');
+const next = document.getElementById('next');
+const ff   = document.getElementById('ff');
+const seek = document.getElementById('seek');
+const time = document.getElementById('time');
+const songName = document.getElementById('songName');
+const state = document.getElementById('state');
+const lineNo = document.getElementById('lineNo');
+
+play.onclick = ()=> setPlaying(!playing);
+stop.onclick = ()=>{ setPlaying(false); currentTime=0; activeIndex=-1; lastTime=0; hideRest(); seek.value=0; updateTimeLabel(); state.textContent='已停止'; };
+prev.onclick = ()=>{ const i = SONGS.indexOf(currentSong); switchSong(SONGS[(i-1+SONGS.length)%SONGS.length]); if(playing) setPlaying(true); };
+next.onclick = ()=>{ const i = SONGS.indexOf(currentSong); switchSong(SONGS[(i+1)%SONGS.length]); if(playing) setPlaying(true); };
+ff.onclick   = ()=>{ currentTime = Math.min(songDuration(), currentTime + 5); seek.value = currentTime; };
+seek.oninput = ()=>{ currentTime = parseFloat(seek.value); lastTime = currentTime; };
+
+function fmt(s){ s=Math.max(0,s|0); const m=(s/60|0).toString().padStart(2,'0'); const ss=(s%60).toString().padStart(2,'0'); return m+':'+ss; }
+function updateTimeLabel(){ time.textContent = fmt(currentTime) + ' / ' + fmt(songDuration()); }
+
+/* ============ 主循环 ============ */
+function loop(now){
+  const real = (now - lastReal)/1000; lastReal = now;
+  if(playing){
+    currentTime += real;
+    if(currentTime >= songDuration()){ currentTime = songDuration(); setPlaying(false); state.textContent='已播完'; }
+  }
+  const dt = currentTime - lastTime;
+  lastTime = currentTime;
+  onTimeUpdate();
+  if(document.activeElement !== seek) seek.value = currentTime;
+  updateTimeLabel();
+  lineNo.textContent = activeIndex >= 0 ? (activeIndex+1) : '-';
+  requestAnimationFrame(loop);
+}
+
+/* 启动：直接播第 3 首极速说唱，证明再快都有动画 */
+switchSong(SONGS[2]);
+setPlaying(true);
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

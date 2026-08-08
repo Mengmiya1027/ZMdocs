@@ -18,6 +18,13 @@
     --zm-background-medium: rgba(255, 255, 255, 0.4);
     --zm-background-high: rgba(255, 255, 255, 0.7);
 
+    --zm-light-dark-verylow: rgb(0 0 0 / 0.1);
+    --zm-light-dark-low: rgb(0 0 0 / 0.2);
+    --zm-light-dark-medium: rgb(0 0 0 / 0.3);
+    --zm-light-dark-high: rgb(0 0 0 / 0.4);
+    --zm-light-dark-limit: rgb(0 0 0);
+    --zm-ghost-light-dark: #f8f8ff;
+
 }
 
 .dark{
@@ -32,5 +39,11 @@
     --zm-background-low: rgba(255, 255, 255, 0.08);
     --zm-background-medium: rgba(255, 255, 255, 0.18);
     --zm-background-high: rgba(255, 255, 255, 0.38);
+
+    --zm-light-dark-verylow: rgb(255 255 255 / 0.1);
+    --zm-light-dark-low: rgb(255 255 255 / 0.2);
+    --zm-light-dark-medium: rgb(255 255 255 / 0.3);
+    --zm-light-dark-high: rgb(255 255 255 / 0.4);
+    --zm-light-dark-limit: rgb(255 255 255);
 
 }
