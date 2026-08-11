@@ -6,7 +6,7 @@
     background: none !important;
 }
 
-.content {
+.content:has( > .content-body) {
     padding-right: 0 !important;
 }
 

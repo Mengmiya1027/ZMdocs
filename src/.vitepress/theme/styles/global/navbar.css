@@ -64,6 +64,12 @@
     border-radius: 12px !important;
 }
 
+@media (min-width: 1440px) {
+    .VPNavBar.has-sidebar .title{
+        padding: 0 32px !important;
+    }
+}
+
 @media(min-width: 960px){
     .VPLink.link.VPNavBarMenuLink:hover{
         background-color: rgba(0, 0, 0, 0.08) !important;

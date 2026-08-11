@@ -751,7 +751,7 @@ const downloadImage = async (index) => {
     setTimeout(() => URL.revokeObjectURL(link.href), 1000)
   } catch (err) {
     console.error('下载封面失败:', err)
-    await showAlert('下载封面失败。QQ音乐来源封面咱不支持下载')
+    await showAlert('轰！擦擦！坐和放宽。不是你的错，而是我们的问题。QQ音乐的下载不支持直接地封面。不要说我们没有警告过你，滚回到以前的版本。你可以帮助我们战胜机器人，或者让我们重回正轨，用微软边缘粉碎你的工作日！')
   }
 }
 
@@ -1649,7 +1649,7 @@ onBeforeUnmount(() => {
   transform: translate(-50%, -50%);
   width: 80vw;
   max-width: 320px;
-  padding: 20px 10px 10px;
+  padding: 15px;
   background: var(--zm-background-high); /* 半透明白底 */
   border: 1px solid rgba(255, 255, 255, 0.6); /* 玻璃边缘光晕 */
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2); /* 一点悬浮阴影 */
@@ -1680,12 +1680,12 @@ onBeforeUnmount(() => {
 }
 @media (min-width: 960px){
   .dialog-btn:hover{
-    transform: scale(1.06);
+    transform: scale(1.04);
   }
 }
 
 .dialog-btn:active{
-  transform: scale(0.9);
+  transform: scale(0.97);
 }
 
 .dialog-btn.cancel{

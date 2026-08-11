@@ -111,6 +111,7 @@ export default defineConfig({
       'SB5133': {
         name: '稚梦',
         avatar: '/images/basic/zm2.png',
+        url: 'https://github.com/SB5133'
       },
       'default': {
         name: '',// 空字符串表示显示原始作者名

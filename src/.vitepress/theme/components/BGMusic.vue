@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch } from 'vue'
+// @ts-ignore
 import BGMusicEd from './BGMusicEd.vue'
+import { currentSong, currentTime as sharedTime, isPlaying, songIdServerFromFlink } from '../utils/lyricStore'
 
 // 音乐数据类型定义（移除 maincolor）
 type Music = {
@@ -27,7 +29,7 @@ const isExpanded = ref(false)
 
 // 音频控制状态
 const audioRef = ref<HTMLAudioElement | null>(null)
-const isPlaying = ref(false)
+// isPlaying 来自 lyricStore（共享给 LyricCard 做打断动画），不再本地声明
 const currentTime = ref(0)
 const duration = ref(0)
 const progress = ref(0)
@@ -42,6 +44,7 @@ const isFirstLoadCompleted = ref(false)
 // 移动端控制按钮显示状态管理
 const lastInteractionTime = ref(Date.now())
 const areControlsVisible = ref(true)
+// @ts-ignore
 const interactionTimer = ref<NodeJS.Timeout | null>(null)
 const MOBILE_INACTIVITY_TIMEOUT = 5000 // 5秒无交互隐藏按钮
 
@@ -277,6 +280,7 @@ const setupAudioEvents = (audio: HTMLAudioElement) => {
 
   audio.addEventListener('timeupdate', () => {
     currentTime.value = audio.currentTime
+    sharedTime.value = audio.currentTime
     progress.value = (audio.currentTime / audio.duration) * 100
   })
 
@@ -299,6 +303,9 @@ const setupAudioEvents = (audio: HTMLAudioElement) => {
 const loadMusic = (index: number) => {
   if (!audioRef.value || index < 0 || index >= musicList.value.length) return
   const music = musicList.value[index]
+  // 广播当前曲目给 LyricCard（从 flink 派生 id/server）
+  const { id, server } = songIdServerFromFlink(music.flink)
+  currentSong.value = { id, server, title: music.title, author: music.author, cover: music.tlink }
   currentIndex.value = index
 
   // 重置状态

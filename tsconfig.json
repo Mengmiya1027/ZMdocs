@@ -9,6 +9,8 @@
   ],
   "exclude": ["node_modules", "dist"],
   "compilerOptions": {
+    "allowJs": true,
+    "noImplicitAny": false,
     "moduleResolution": "bundler",
     "jsx": "preserve",
     "jsxImportSource": "vue",

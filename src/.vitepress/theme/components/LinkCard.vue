@@ -114,12 +114,12 @@ a::after {
 .traffic-light{
   display: flex;
   margin: 10px 0 0 10px;
-  gap: .3vw;
+  gap: .3em;
 }
 
 .point {
-  width: 1vw;
-  height: 1vw;
+  width: .5em;
+  height: .5em;
   border-radius: 50%;
 }
 
@@ -165,5 +165,15 @@ a::after {
 
 .card-tip {
   color: var(--vp-c-text-2);
+}
+
+@media (max-width: 768px) {
+  .card-content{
+    flex-direction: column;
+    padding-right: 24px;
+  }
+  .card-title{
+    margin: 0 auto 10px;
+  }
 }
 </style>
