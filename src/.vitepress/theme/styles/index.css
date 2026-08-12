@@ -11,4 +11,5 @@
 @import "./docs/custom-block.css";
 @import "./docs/document.css";
 @import "./docs/outline-scroll.css";
+@import "./docs/code-group.css";
 @import "global/navbar.css";

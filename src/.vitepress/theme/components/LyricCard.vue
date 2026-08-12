@@ -314,42 +314,43 @@ const currentLine = computed(() => {
 
 function updateMode() {
   const w = window.innerWidth
-  // 🔥 关键修改：若当前路径为首页，强制启用底部模式并传送到 body
-  if (route.path === '/') {
-    isBottomMode.value = true
-    teleportTarget.value = document.body
-    wrapperLeft.value = window.innerWidth / 2   // 水平居中
+
+  // 宽屏（≥1280px）走右上角模式
+  if (w >= 1280) {
+    isBottomMode.value = false
     return
   }
 
-  // 非首页：按原有宽度逻辑判断
-  if (w < 1280) {
-    const container = document.querySelector('.content:has(.content-container)') as HTMLElement
-    if (container) {
-      isBottomMode.value = true
-      teleportTarget.value = container
-      const rect = container.getBoundingClientRect()
-      wrapperLeft.value = rect.left + rect.width / 2
-      return
-    }
-  }
-  isBottomMode.value = false
+  // 中窄屏启用底部模式，固定传送到 body
+  isBottomMode.value = true
+  teleportTarget.value = document.body
+
+  // 读取左侧边栏宽度（CSS 变量），若为 0 则公式自动退化为居中
+  const sidebarWidth = parseFloat(
+      getComputedStyle(document.documentElement).getPropertyValue('--vp-sidebar-width')
+  ) || 0
+
+  // 主内容区域水平居中：left = (屏幕宽 + 侧边栏宽) / 2
+  wrapperLeft.value = (w + sidebarWidth) / 2
 }
 
 // 滚动时更新 wrapperLeft（仅非首页有效）
 function updateWrapperLeft() {
-  // 若当前是首页，不做任何事（因为固定居中，滚动不影响）
-  if (route.path === '/') return
+  // 非底部模式或宽屏时不用更新
   if (!isBottomMode.value) return
-  const container = document.querySelector('.content:has(.content-container)') as HTMLElement
-  if (container) {
-    const rect = container.getBoundingClientRect()
-    wrapperLeft.value = rect.left + rect.width / 2
-  }
+  const w = window.innerWidth
+  if (w >= 1280) return
+
+  const sidebarWidth = parseFloat(
+      getComputedStyle(document.documentElement).getPropertyValue('--vp-sidebar-width')
+  ) || 0
+
+  wrapperLeft.value = (w + sidebarWidth) / 2
 }
 
 // 监听路由变化，重新判断模式
-watch(() => route.path, () => {
+watch(() => route.path, async () => {
+  await nextTick()   // 关键：确保新页面渲染完成
   updateMode()
 })
 
