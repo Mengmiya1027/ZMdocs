@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch, nextTick, onMounted, onUnmounted, computed } from 'vue'
-import { useRoute } from 'vitepress'          // VitePress 环境；若用 vue-router 可改为 'vue-router'
+import { useRoute } from 'vitepress'
 import { currentSong, currentTime as sharedTime, isPlaying } from '../utils/lyricStore'
 
 const route = useRoute()                       // 获取当前路由
@@ -25,6 +25,10 @@ const lyricsMap = new Map<string, LrcEntry>()
 const cacheKeys: string[] = []
 const lines = ref<LrcLine[]>([])
 const activeIndex = ref(-1)
+
+const isHomeOrNotFound = computed(() => {
+  return route.path === '/' || route.data?.isNotFound === true
+})
 
 function addCache(key: string, entry: LrcEntry) {
   const idx = cacheKeys.indexOf(key)
@@ -314,37 +318,33 @@ const currentLine = computed(() => {
 
 function updateMode() {
   const w = window.innerWidth
-
-  // 宽屏（≥1280px）走右上角模式
   if (w >= 1280) {
     isBottomMode.value = false
     return
   }
-
-  // 中窄屏启用底部模式，固定传送到 body
   isBottomMode.value = true
   teleportTarget.value = document.body
 
-  // 读取左侧边栏宽度（CSS 变量），若为 0 则公式自动退化为居中
-  const sidebarWidth = parseFloat(
-      getComputedStyle(document.documentElement).getPropertyValue('--vp-sidebar-width')
-  ) || 0
-
-  // 主内容区域水平居中：left = (屏幕宽 + 侧边栏宽) / 2
+  let sidebarWidth = 0
+  if (!isHomeOrNotFound.value) {
+    sidebarWidth = parseFloat(
+        getComputedStyle(document.documentElement).getPropertyValue('--vp-sidebar-width')
+    ) || 0
+  }
   wrapperLeft.value = (w + sidebarWidth) / 2
 }
 
-// 滚动时更新 wrapperLeft（仅非首页有效）
 function updateWrapperLeft() {
-  // 非底部模式或宽屏时不用更新
   if (!isBottomMode.value) return
   const w = window.innerWidth
   if (w >= 1280) return
 
-  const sidebarWidth = parseFloat(
-      getComputedStyle(document.documentElement).getPropertyValue('--vp-sidebar-width')
-  ) || 0
-
+  let sidebarWidth = 0
+  if (!isHomeOrNotFound.value) {
+    sidebarWidth = parseFloat(
+        getComputedStyle(document.documentElement).getPropertyValue('--vp-sidebar-width')
+    ) || 0
+  }
   wrapperLeft.value = (w + sidebarWidth) / 2
 }
 
@@ -369,7 +369,7 @@ onUnmounted(() => {
 <template>
   <!-- ===== 底部模式（无动画，单卡直接显示） ===== -->
   <Teleport v-if="isBottomMode" :to="teleportTarget">
-    <div class="bottom-wrapper" :class="{ 'home-page': route.path === '/' }" :style="{ left: wrapperLeft + 'px', '--dur': bottomDuration + 's' }">
+    <div class="bottom-wrapper" :class="{ 'home-page': isHomeOrNotFound }" :style="{ left: wrapperLeft + 'px', '--dur': bottomDuration + 's' }">
       <!-- 新增包裹层，hover 动画转移到此层 -->
       <div class="bottom-card-wrapper">
         <Transition name="fade" mode="out-in">
@@ -498,6 +498,7 @@ onUnmounted(() => {
   transform: translateX(-50%);
   z-index: 25;
   pointer-events: auto;
+  transition: left 0.3s ease;
 }
 
 /* 新增包裹层：承载 hover 位移动画 */

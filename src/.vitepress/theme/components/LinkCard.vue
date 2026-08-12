@@ -47,8 +47,8 @@ const handleLinkClick = (e: MouseEvent) => {
         <div class="linkcardBody">
           <div class="traffic-light">
             <div class="point red" />
-            <div class="point green" />
             <div class="point yellow" />
+            <div class="point green" />
           </div>
 
           <div class="card-content" >
@@ -137,7 +137,6 @@ a::after {
 .card-content{
   display: flex;
   align-items: baseline;
-  flex-wrap: wrap;
   width: 100%;
   padding: 24px 0 1vw 24px;
 }

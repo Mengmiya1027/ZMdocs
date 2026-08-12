@@ -17,7 +17,7 @@ author: [SB5133,Mengmiya1027]
 </LinkCard>
 
 <LinkCard title="📘 技术笔记" link="/tech-docs/notes/Android">
-这里藏着许多宝藏！找到它们或许就能揭开尘封已久的秘密
+此处藏有宝藏，寻得或能解秘
 </LinkCard>
 
 <LinkCard title="⌚ 刷机教程" link="/tech-docs/flash/xtc/Z8">

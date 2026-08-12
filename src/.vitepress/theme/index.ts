@@ -6,7 +6,7 @@ import { autoHeroImageTilt } from './utils/heroImageTilt'
 import { applyNavbarAnd404Style } from './utils/Navbar-and-404-Style'
 import { useSidebarHeight } from './utils/useSidebarHeight'
 import { setupOutlineSmoothScroll } from './utils/outlineScroll'
-import { setupContentTransition } from './utils/contentTransition' // 仅此一行
+import { setupContentTransition } from './utils/contentTransition'
 
 // 主题统一入口
 // @ts-ignore
